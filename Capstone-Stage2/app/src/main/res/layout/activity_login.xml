@@ -1,0 +1,165 @@
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.android.app.atfnews.LoginActivity">
+
+
+
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/login_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="30dp"
+        android:layout_marginTop="30dp"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/scrolling_background"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="centerCrop"
+        android:scaleX="@dimen/start_scale"
+        android:scaleY="@dimen/start_scale"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        tools:src="@drawable/busy" />
+
+    <!--<com.vpaliy.loginconcept.AnimatedViewPager
+        android:id="@+id/pager"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/color_log_in"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />-->
+
+    <ImageView
+        android:id="@+id/first"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginLeft="92dp"
+        android:src="@drawable/com_facebook_favicon_blue"
+        app:layout_constraintBottom_toBottomOf="parent"
+
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.574" />
+
+    <ImageView
+        android:id="@+id/second"
+        android:layout_width="101dp"
+        android:layout_height="101dp"
+        android:layout_marginLeft="52dp"
+        android:paddingEnd="1dp"
+        android:paddingRight="1dp"
+        android:src="@drawable/common_google_signin_btn_icon_light"
+        app:layout_constraintBottom_toBottomOf="@+id/first"
+        app:layout_constraintLeft_toRightOf="@+id/first"
+        app:layout_constraintTop_toTopOf="@+id/first"
+        app:layout_constraintVertical_bias="0.523" />
+
+    <!--<ImageView-->
+        <!--android:src="@drawable/twitter"-->
+        <!--android:id="@+id/last"-->
+        <!--android:layout_width="@dimen/option_size"-->
+        <!--android:layout_height="@dimen/option_size"-->
+        <!--app:layout_constraintRight_toRightOf="parent"-->
+        <!--app:layout_constraintLeft_toRightOf="@+id/second"-->
+        <!--app:layout_constraintBottom_toBottomOf="@+id/second"-->
+        <!--app:layout_constraintTop_toTopOf="@+id/second"-->
+        <!--app:layout_constraintVertical_bias="1.0" />-->
+    <TextView
+        android:id="@+id/logo"
+        style="@style/Base.TextAppearance.AppCompat.Title"
+        android:layout_width="0dp"
+        android:layout_height="75dp"
+        android:layout_marginTop="55dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:src="@drawable/log"
+        android:text="@string/app_name"
+        android:textAlignment="center"
+        android:textColor="@color/color_logo"
+        android:textColorHighlight="@color/color_logo"
+        android:textColorHint="@color/color_logo"
+        android:textSize="55sp"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline"
+        android:fontFamily="sans-serif-medium"/>
+
+    <android.support.constraint.Guideline
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/guideline"
+        app:layout_constraintGuide_begin="@dimen/guideline_margin"
+        android:orientation="horizontal" />
+
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/login_with_google"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
+
+</android.support.constraint.ConstraintLayout>
+
+
+
+    <!--
+    <?xml version="1.0" encoding="utf-8"?>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/activity_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        tools:context="com.android.app.atfnews.LoginActivity">
+
+
+        <com.facebook.login.widget.LoginButton
+            android:id="@+id/login_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="30dp"
+            android:layout_marginTop="30dp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/btnLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="#494949"
+            android:padding="16dp"
+            android:text="Login With Facebook"
+            android:textColor="#fff" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:indeterminate="true"
+            android:visibility="gone" />
+
+    </LinearLayout>-->

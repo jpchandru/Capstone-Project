@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Capstone-Stage2.iml" filepath="$PROJECT_DIR$/Capstone-Stage2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/atfnewsdisplayandroidlibrary/atfnewsdisplayandroidlibrary.iml" filepath="$PROJECT_DIR$/atfnewsdisplayandroidlibrary/atfnewsdisplayandroidlibrary.iml" />
+      <module fileurl="file://$PROJECT_DIR$/atfnewsjavalibrary/atfnewsjavalibrary.iml" filepath="$PROJECT_DIR$/atfnewsjavalibrary/atfnewsjavalibrary.iml" />
+      <module fileurl="file://$PROJECT_DIR$/atfnewsprocessorandroidlibrary/atfnewsprocessorandroidlibrary.iml" filepath="$PROJECT_DIR$/atfnewsprocessorandroidlibrary/atfnewsprocessorandroidlibrary.iml" />
+      <module fileurl="file://$PROJECT_DIR$/backend/backend.iml" filepath="$PROJECT_DIR$/backend/backend.iml" />
+      <module fileurl="file://$PROJECT_DIR$/atfnewsjavalibrary/bibjavalibrary.iml" filepath="$PROJECT_DIR$/atfnewsjavalibrary/bibjavalibrary.iml" />
+    </modules>
+  </component>
+</project>

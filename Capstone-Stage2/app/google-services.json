@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "627917997445",
+    "firebase_url": "https://atfnews-62d69.firebaseio.com",
+    "project_id": "atfnews-62d69",
+    "storage_bucket": "atfnews-62d69.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:627917997445:android:e76c75fb056751a8",
+        "android_client_info": {
+          "package_name": "com.android.app.atfnews"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "627917997445-oo3if8f44q5lp3u8tgnhig95up99tnlb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.android.app.atfnews",
+            "certificate_hash": "62b9f838f1a7478259c1e264b402879f1f35efa5"
+          }
+        },
+        {
+          "client_id": "627917997445-voi28eqbqq6nup4e2tpch03j707m6d2c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXrmVmfrB9KyNmZ51sFiBgbguo0dTCJZM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "627917997445-voi28eqbqq6nup4e2tpch03j707m6d2c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
