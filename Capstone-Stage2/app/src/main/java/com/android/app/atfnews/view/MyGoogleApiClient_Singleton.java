@@ -1,4 +1,4 @@
-package com.android.app.atfnews;
+package com.android.app.atfnews.view;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 

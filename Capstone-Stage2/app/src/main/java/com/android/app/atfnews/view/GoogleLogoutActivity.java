@@ -1,4 +1,4 @@
-package com.android.app.atfnews;
+package com.android.app.atfnews.view;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +13,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.app.atfnews.R;
+import com.android.app.atfnews.utils.PrefUtils;
+import com.android.app.atfnews.model.User;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;

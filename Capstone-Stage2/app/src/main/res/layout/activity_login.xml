@@ -1,12 +1,10 @@
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.android.app.atfnews.LoginActivity">
-
+    tools:context="com.android.app.atfnews.view.LoginActivity">
 
 
     <com.facebook.login.widget.LoginButton
@@ -49,19 +47,18 @@
         android:id="@+id/first"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:layout_marginLeft="92dp"
+        android:layout_marginLeft="80dp"
         android:src="@drawable/com_facebook_favicon_blue"
         app:layout_constraintBottom_toBottomOf="parent"
-
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.574" />
+        app:layout_constraintVertical_bias="0.468" />
 
     <ImageView
         android:id="@+id/second"
         android:layout_width="101dp"
-        android:layout_height="101dp"
-        android:layout_marginLeft="52dp"
+        android:layout_height="107dp"
+        android:layout_marginLeft="60dp"
         android:paddingEnd="1dp"
         android:paddingRight="1dp"
         android:src="@drawable/common_google_signin_btn_icon_light"
@@ -70,16 +67,83 @@
         app:layout_constraintTop_toTopOf="@+id/first"
         app:layout_constraintVertical_bias="0.523" />
 
+   <!-- <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/email_login_text"
+            android:layout_width="229dp"
+            android:layout_height="48dp"
+            android:hint="john@johndoe.com"
+            android:inputType="textEmailAddress"
+            android:fontFamily="sans-serif-condensed"
+            android:maxLines="1"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/second"
+            app:layout_constraintVertical_bias="0.459"/>
+
+    </android.support.design.widget.TextInputLayout>-->
+
+    <EditText
+        android:id="@+id/email_login_text"
+        style="@android:style/Widget.Holo.EditText"
+        android:layout_width="229dp"
+        android:layout_height="48dp"
+        android:background="@color/white_transparent"
+        android:fontFamily="sans-serif-condensed"
+        android:inputType="textEmailAddress"
+        android:hint="Enter your email here ..."
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display2"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/second"
+        app:layout_constraintVertical_bias="0.459" />
+
+    <!--<ImageView
+        android:id="@+id/button2"
+        android:layout_width="228dp"
+        android:layout_height="66dp"
+        android:contentDescription="SUBMIT"
+        android:src="@drawable/submitbutton"
+        app:layout_constraintBottom_toBottomOf="@+id/logo"
+
+        app:layout_constraintVertical_bias="0.523" />-->
+
+    <ImageView
+        android:id="@+id/login_with_email"
+        android:layout_width="200dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="12dp"
+        android:contentDescription="@string/login_with_email"
+        android:src="@drawable/emailloginbutton"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="@+id/email_login_text"
+        app:layout_constraintTop_toTopOf="@+id/email_login_text"
+        app:layout_constraintVertical_bias="0.333" />
+
     <!--<ImageView-->
-        <!--android:src="@drawable/twitter"-->
-        <!--android:id="@+id/last"-->
-        <!--android:layout_width="@dimen/option_size"-->
-        <!--android:layout_height="@dimen/option_size"-->
-        <!--app:layout_constraintRight_toRightOf="parent"-->
-        <!--app:layout_constraintLeft_toRightOf="@+id/second"-->
-        <!--app:layout_constraintBottom_toBottomOf="@+id/second"-->
-        <!--app:layout_constraintTop_toTopOf="@+id/second"-->
-        <!--app:layout_constraintVertical_bias="1.0" />-->
+    <!--android:src="@drawable/twitter"-->
+    <!--android:id="@+id/last"-->
+    <!--android:layout_width="@dimen/option_size"-->
+    <!--android:layout_height="@dimen/option_size"-->
+    <!--app:layout_constraintRight_toRightOf="parent"-->
+    <!--app:layout_constraintLeft_toRightOf="@+id/second"-->
+    <!--app:layout_constraintBottom_toBottomOf="@+id/second"-->
+    <!--app:layout_constraintTop_toTopOf="@+id/second"-->
+    <!--app:layout_constraintVertical_bias="1.0" />-->
+
+
     <TextView
         android:id="@+id/logo"
         style="@style/Base.TextAppearance.AppCompat.Title"
@@ -88,6 +152,7 @@
         android:layout_marginTop="55dp"
         android:focusable="true"
         android:focusableInTouchMode="true"
+        android:fontFamily="sans-serif-medium"
         android:src="@drawable/log"
         android:text="@string/app_name"
         android:textAlignment="center"
@@ -98,21 +163,21 @@
         android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline"
-        android:fontFamily="sans-serif-medium"/>
+        app:layout_constraintTop_toTopOf="@+id/guideline" />
 
     <android.support.constraint.Guideline
+        android:id="@+id/guideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/guideline"
-        app:layout_constraintGuide_begin="@dimen/guideline_margin"
-        android:orientation="horizontal" />
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="@dimen/guideline_margin" />
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/login_with_google"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"/>
+        android:visibility="gone" />
+
 
 </android.support.constraint.ConstraintLayout>
 

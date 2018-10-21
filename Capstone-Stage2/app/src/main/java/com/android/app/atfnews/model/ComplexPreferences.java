@@ -1,4 +1,4 @@
-package com.android.app.atfnews;
+package com.android.app.atfnews.model;
 
 import android.content.Context;
 import android.content.SharedPreferences;

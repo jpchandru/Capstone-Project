@@ -1,6 +1,7 @@
-package com.android.app.atfnews;
+package com.android.app.atfnews.view;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,6 +11,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.app.atfnews.utils.PrefUtils;
+import com.android.app.atfnews.R;
+import com.android.app.atfnews.model.User;
 import com.facebook.login.LoginManager;
 
 import java.io.IOException;
@@ -17,20 +21,24 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 
-public class LogoutActivity extends Activity {
+public class FacebookLogoutActivity extends Activity {
 
-    private static final String TAG = "LogoutActivity";
+    private static final String TAG = "FacebookLogoutActivity";
 
-    /*private TextView btnLogout;
+    private TextView btnLogout;
     private User user;
     private ImageView profileImage;
+    private ProgressDialog progressDialog;
     Bitmap bitmap;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_logout_facebook);
-        user=PrefUtils.getCurrentUser(LogoutActivity.this);
+        user= PrefUtils.getCurrentUser(FacebookLogoutActivity.this);
         profileImage= (ImageView) findViewById(R.id.profileImage);
+        progressDialog = new ProgressDialog(FacebookLogoutActivity.this);
+        progressDialog.setMessage("Loading...");
+        progressDialog.show();
 
         // fetching facebook's profile picture
         new AsyncTask<Void,Void,Void>(){
@@ -63,20 +71,15 @@ public class LogoutActivity extends Activity {
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PrefUtils.clearCurrentUser(LogoutActivity.this);
-
-
+                PrefUtils.clearCurrentUser(FacebookLogoutActivity.this);
+                PrefUtils.clearCurrentUserFromFirebase(FacebookLogoutActivity.this);
                 // We can logout from facebook by calling following method
                 LoginManager.getInstance().logOut();
-
-
-                Intent i= new Intent(LogoutActivity.this,LoginActivity.class);
+                Intent i= new Intent(FacebookLogoutActivity.this,LoginActivity.class);
                 startActivity(i);
                 finish();
             }
         });
-    }*/
-
-
-
+        progressDialog.dismiss();
+    }
 }

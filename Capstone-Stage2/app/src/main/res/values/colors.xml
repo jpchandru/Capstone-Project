@@ -20,4 +20,9 @@
     <color name="color_text_highlight">#fafafa</color>
     <color name="color_text">#FFF</color>
 
+    <color name="color_background">#ffe8e0</color>
+    <color name="color_toolbar">#f59c7d</color>
+    <!--<color name="color_listItem">#ffe8e0</color>-->
+    <color name="color_listItem">#d4bab0</color>
+
 </resources>

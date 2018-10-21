@@ -1,4 +1,4 @@
-package com.android.app.atfnews;
+package com.android.app.atfnews.utils;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -7,7 +7,7 @@ import android.net.NetworkInfo;
 
 public class Utils {
 
-    private Context mContext = null;
+    private static Context mContext = null;
 
     /**
      * Public constructor that takes mContext for later use
@@ -25,7 +25,7 @@ public class Utils {
     }
 
     //This is a method to Check if the device internet connection is currently on
-    public boolean isNetworkAvailable() {
+    public static boolean isNetworkAvailable(Context mContext) {
 
         ConnectivityManager connectivityManager
 
