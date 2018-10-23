@@ -7,14 +7,9 @@ import android.arch.persistence.room.TypeConverters;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.android.app.atfnews.utils.DateConverter;
 import com.google.gson.annotations.SerializedName;
-
-import org.json.JSONObject;
-
-import java.util.Date;
 
 /**
  * Created by cj on 10/4/18.
@@ -59,7 +54,7 @@ public class AtfNewsItem implements Parcelable {
     @SerializedName("category")
     private String category;
 
-    public  AtfNewsItem(){
+    public AtfNewsItem() {
 
     }
 

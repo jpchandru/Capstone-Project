@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
-import android.widget.Toast;
 
 import com.android.app.atfnews.R;
 import com.android.app.atfnews.model.AtfNewsCountries;
@@ -32,10 +31,6 @@ public class AtfNewsCountriesListFactory implements RemoteViewsService.RemoteVie
 
     @Override
     public void onCreate() {
-        //recipe = Preferences.loadRecipe(mContext);
-        //atfNewsCountriesArrayList = recipe.getIngredientList();
-        //ArrayList<AtfNewsCountries> atfNewsCountriesList = new ArrayList<AtfNewsCountries>();
-
         atfNewsCountriesArrayList.add(new AtfNewsCountries("USA", "us"));
         atfNewsCountriesArrayList.add(new AtfNewsCountries("United Kingdom", "gb"));
         atfNewsCountriesArrayList.add(new AtfNewsCountries("Australia", "au"));
@@ -47,16 +42,12 @@ public class AtfNewsCountriesListFactory implements RemoteViewsService.RemoteVie
      */
     @Override
     public void onDataSetChanged() {
-        if(atfNewsCountriesArrayList == null && atfNewsCountriesArrayList.size() == 0){
+        if (atfNewsCountriesArrayList == null && atfNewsCountriesArrayList.size() == 0) {
             atfNewsCountriesArrayList.add(new AtfNewsCountries("USA", "us"));
             atfNewsCountriesArrayList.add(new AtfNewsCountries("United Kingdom", "gb"));
             atfNewsCountriesArrayList.add(new AtfNewsCountries("Australia", "au"));
             atfNewsCountriesArrayList.add(new AtfNewsCountries("India", "in"));
         }
-        /*atfNewsCountriesArrayList.add(new AtfNewsCountries("USA", "us"));
-        atfNewsCountriesArrayList.add(new AtfNewsCountries("United Kingdom", "gb"));
-        atfNewsCountriesArrayList.add(new AtfNewsCountries("Australia", "au"));
-        atfNewsCountriesArrayList.add(new AtfNewsCountries("India", "in"));*/
     }
 
     @Override
@@ -78,12 +69,9 @@ public class AtfNewsCountriesListFactory implements RemoteViewsService.RemoteVie
         rv.setTextViewText(R.id.widget_atfnews, countryCode);
         Log.d(TAG, "position: " + position
                 + ", countryCode: " + countryCode);
-       // Toast.makeText(mContext, "Clicked on country code: "+countryCode, Toast.LENGTH_SHORT);
-
         Intent fillInIntent = new Intent();
         fillInIntent.putExtra("clicked_country_code", countryCode);
         rv.setOnClickFillInIntent(R.id.widget_atfnews, fillInIntent);
-
         return rv;
     }
 

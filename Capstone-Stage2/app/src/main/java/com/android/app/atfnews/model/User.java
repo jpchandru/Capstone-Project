@@ -36,7 +36,7 @@ public class User implements Parcelable {
     @SerializedName("photoUrl")
     public String photoUrl;
 
-    public User(){
+    public User() {
     }
 
     public User(@NonNull String id, String name, @NonNull String email, String facebookID, String googleId, String gender, String photoUrl) {
@@ -60,11 +60,12 @@ public class User implements Parcelable {
     }
 
     // interface Parcelable callback to parcel
-    public static final Parcelable.Creator CREATOR = new  Parcelable.Creator(){
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
         @Override
         public User createFromParcel(Parcel source) {
             return new User(source);
         }
+
         @Override
         public User[] newArray(int size) {
             return new User[size];

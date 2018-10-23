@@ -12,13 +12,13 @@
     <string name="action_trending">Trending</string>
     <string name="action_favorite">Favorite</string>
 
-    <string name="banner_ad_unit_id">Enter here</string>
-    <string name="interstitial_ad_unit_id">Enter here</string>
-    <string name="facebook_app_id">Enter here</string>
-    <string name="fb_login_protocol_scheme">Enter here</string>
-    <string name="firebase_url">Enter here</string>
+    <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="interstitial_ad_unit_id">/6499/example/interstitial</string>
+    <string name="facebook_app_id">1922407441395221</string>
+    <string name="fb_login_protocol_scheme">fb1922407441395221</string>
+    <string name="firebase_url">https://atfnews-62d69.firebaseio.com</string>
     <string name="title_activity_logout">LogoutActivity</string>
-    <string name="google_web_client_id">Enter here</string>
+    <string name="google_web_client_id">627917997445-voi28eqbqq6nup4e2tpch03j707m6d2c.apps.googleusercontent.com</string>
     <string name="title_activity_trending_news">Trending News</string>
     <string name="title_activity_top_news">Top News</string>
     <string name="title_activity_fav_news">Favorite News</string>
@@ -34,5 +34,7 @@
 
 
 </resources>
+
+
 
 

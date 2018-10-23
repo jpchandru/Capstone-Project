@@ -24,49 +24,27 @@ public class WorldNewsWidgetProvider extends AppWidgetProvider {
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
 
-        /*ArrayList<AtfNewsCountries> atfNewsCountriesList = new ArrayList<AtfNewsCountries>();
-
-        atfNewsCountriesList.add(new AtfNewsCountries("USA","us"));
-        atfNewsCountriesList.add(new AtfNewsCountries("United Kingdom","gb"));
-        atfNewsCountriesList.add(new AtfNewsCountries("Australia","au"));
-        atfNewsCountriesList.add(new AtfNewsCountries("India","in"));*/
-
-
-        //Log.d(TAG, "Successfully loaded the countries " + atfNewsCountriesList.size());
-        PrefUtils.setUrlNewsType(AtfNewsUrlType.us.name(),context);
+        PrefUtils.setUrlNewsType(AtfNewsUrlType.us.name(), context);
         Intent countriesIntent = new Intent(context, AtfNewsWidgetService.class);
         countriesIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-
         // Create an intent to launch TopNewsActivity when clicked
         Intent intent = new Intent(context, TopNewsActivity.class);
         intent.putExtra("country_code", PrefUtils.getUrlNewsType(context));
-        //Gson gson = new Gson();
-        //String atfNewsCountryListJson = gson.toJson(atfNewsCountriesList);
-        //intent.putParcelableArrayListExtra("country_list", atfNewsCountriesList);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
-
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.atfnews_widget_provider);
-
         // Click handler will allow launching the PendingIntent
         views.setOnClickPendingIntent(R.id.widget_container, pendingIntent);
-
-
         views.setTextViewText(R.id.widget_atfnews_countryname, "ATF World News");
-        Log.d(TAG, "Recipe name was successfully inserted: " + "Country Name");
-
+        Log.d(TAG, "Country name header has been successfully inserted: " + "Country Name");
         views.setRemoteAdapter(R.id.widget_listview, countriesIntent);
-
         Intent clickIntentTemplate = new Intent(context, TopNewsActivity.class);
         PendingIntent clickPendingIntentTemplate = TaskStackBuilder.create(context)
                 .addNextIntentWithParentStack(clickIntentTemplate)
                 .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
         views.setPendingIntentTemplate(R.id.widget_listview, clickPendingIntentTemplate);
-
-
         // Instruct the widget manager to update the widget
         appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.widget_listview);
-
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 

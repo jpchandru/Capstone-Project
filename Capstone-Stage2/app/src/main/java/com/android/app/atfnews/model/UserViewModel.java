@@ -2,15 +2,11 @@ package com.android.app.atfnews.model;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
-import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-
 import com.android.app.atfnews.repository.AppDatabase;
 import com.android.app.atfnews.repository.UserDAO;
-
-import java.util.List;
 
 public class UserViewModel extends AndroidViewModel {
 
@@ -24,5 +20,7 @@ public class UserViewModel extends AndroidViewModel {
         userDAO = database.userDAO();
     }
 
-    public UserDAO getUserDAO(){   return userDAO; }
+    public UserDAO getUserDAO() {
+        return userDAO;
+    }
 }
