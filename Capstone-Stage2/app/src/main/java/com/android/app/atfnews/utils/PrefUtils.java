@@ -2,6 +2,7 @@ package com.android.app.atfnews.utils;
 
 import android.content.Context;
 
+import com.android.app.atfnews.model.AtfNewsUrlType;
 import com.android.app.atfnews.model.ComplexPreferences;
 import com.android.app.atfnews.model.FirebaseAtfNewsUser;
 import com.android.app.atfnews.model.User;
@@ -20,6 +21,12 @@ public class PrefUtils {
         complexPreferences.commit();
     }
 
+    public static void setUrlNewsType(String countryCode, Context ctx) {
+        ComplexPreferences complexPreferences = ComplexPreferences.getComplexPreferences(ctx, "user_prefs_country_code", 0);
+        complexPreferences.putObject("current_country_code", countryCode);
+        complexPreferences.commit();
+    }
+
     public static User getCurrentUser(Context ctx) {
         ComplexPreferences complexPreferences = ComplexPreferences.getComplexPreferences(ctx, "user_prefs", 0);
         User currentUser = complexPreferences.getObject("current_user_value", User.class);
@@ -30,6 +37,12 @@ public class PrefUtils {
         ComplexPreferences complexPreferences = ComplexPreferences.getComplexPreferences(ctx, "user_prefs_firebase", 0);
         FirebaseAtfNewsUser currentUser = complexPreferences.getObject("current_user_value_firebase", FirebaseAtfNewsUser.class);
         return currentUser;
+    }
+
+    public static String getUrlNewsType(Context ctx) {
+        ComplexPreferences complexPreferences = ComplexPreferences.getComplexPreferences(ctx, "user_prefs_country_code", 0);
+        String atfNewsUrlType = complexPreferences.getObject("current_country_code", String.class);
+        return atfNewsUrlType;
     }
 
     public static void clearCurrentUser(Context ctx) {

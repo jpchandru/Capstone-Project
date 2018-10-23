@@ -7,6 +7,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -21,8 +23,11 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
-public class EmailLogoutActivity extends Activity {
+
+public class EmailLogoutActivity extends AppCompatActivity {
 
     private static final String TAG = "EmailLogoutActivity";
 
@@ -31,11 +36,19 @@ public class EmailLogoutActivity extends Activity {
     private ImageView profileImage;
     private ProgressDialog progressDialog;
     Bitmap bitmap;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_logout_email);
         user= PrefUtils.getCurrentUser(EmailLogoutActivity.this);
+        ButterKnife.bind(this);
+        setSupportActionBar(toolbar);
+        if(null != this.getSupportActionBar()){
+            this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         profileImage= (ImageView) findViewById(R.id.profileImage);
         progressDialog = new ProgressDialog(EmailLogoutActivity.this);
         progressDialog.setMessage("Loading...");

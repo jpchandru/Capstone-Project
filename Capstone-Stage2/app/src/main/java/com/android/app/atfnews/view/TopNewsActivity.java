@@ -8,6 +8,7 @@ import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -77,6 +78,7 @@ public class TopNewsActivity extends AppCompatActivity implements AtfNewsItmAdap
     private static final String ATFNEWSITEMLISTKEY = "matfNewsItemListKey";
     private static final String FAVATFNEWSITEMLISTKEY = "mFavAtfNewsItemListKey";
     int clickedItemIndex = -1;
+    String countryCode, clickedCountryCode = null;
 
 
     @Override
@@ -88,6 +90,12 @@ public class TopNewsActivity extends AppCompatActivity implements AtfNewsItmAdap
         mDb = AppDatabase.getsInstance(getApplicationContext());
         mUserFirebaseDatabase = FirebaseDatabase.getInstance();
         mUserFirebaseDatabaseReference = mUserFirebaseDatabase.getReference("favatfnewsitem");
+
+        Intent i = getIntent();
+        countryCode = i.getStringExtra("country_code");
+
+        Intent cli = getIntent();
+        clickedCountryCode = i.getStringExtra("clicked_country_code");
 
 
         /*if (savedInstanceState != null && savedInstanceState.containsKey(ATFNEWSITEMLISTKEY)) {
@@ -176,53 +184,12 @@ public class TopNewsActivity extends AppCompatActivity implements AtfNewsItmAdap
             }
         });
         mUserFirebaseDatabaseReference.addListenerForSingleValueEvent(valueEventListener);
-
-
     }
 
     private void startFavNewsDpIntentActivity() {
         Intent FavNewsintent = new Intent(this, FavNewsDpActivity.class);
         startActivity(FavNewsintent);
     }
-
-    /*private void saveEditor(String url){
-        editor.putString(atfNewsItem.getTitle(), "true");
-        editor.commit();
-    }*/
-
-    /*private void buildAtfNewsItemList(){
-        // write code here to call webservices
-        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, BASE_URL+TRENDING_NEWS_URL, null,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        for (int i = 0; i < response.length(); i++)
-                            try {
-                                //PARSE JSON ARRAY
-                                JSONObject newsJSON = response.getJSONObject(i);
-                                JSONArray atfNewsItemJsonArray = newsJSON.getJSONArray(ARTICLES);
-                                ArrayList<AtfNewsItem> atfNewsItemList = new ArrayList<>();
-                                for (int j = 0; j < atfNewsItemJsonArray.length(); j++) {
-                                    JSONObject jsonAtfNewsItem = atfNewsItemJsonArray.getJSONObject(j);
-                                    AtfNewsItem atfNewsItem = new AtfNewsItem(jsonAtfNewsItem);
-                                    atfNewsItemList.add(atfNewsItem);
-                                }
-
-                            }catch (Exception e) {
-                                e.printStackTrace();
-                                Log.e(TAG, "Error: " + e.getMessage());
-                            }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.i(TAG, "Error: " + error.toString());
-            }
-        });
-        requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(request);
-    }*/
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -257,7 +224,7 @@ public class TopNewsActivity extends AppCompatActivity implements AtfNewsItmAdap
             String searchResults;
             try {
                 searchResults = NetworkUtils.getResponseFromHTTPUrl(searchUrl);
-                mAtfNewsItemList = JsonUtils.parseNewsApiJson(searchResults, NEWSTYPE, COUNTRY, CATEGORY, getUserEmailId());
+                mAtfNewsItemList = JsonUtils.parseNewsApiJson(searchResults, NEWSTYPE, getNewsCountryCode(), CATEGORY, getUserEmailId());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -294,7 +261,7 @@ public class TopNewsActivity extends AppCompatActivity implements AtfNewsItmAdap
 
     private void setUpAtfNewsItemsViewModel() {
         AtfNewsItemViewModel viewModel = ViewModelProviders.of(this).get(AtfNewsItemViewModel.class);
-        viewModel.getAtfNewsItemsLiveData().observe(this, new Observer<List<AtfNewsItem>>() { //TODO replace the hardcode value with real userid
+        viewModel.getAtfNewsItemsDAO().loadAllAtfNewsItem(getNewsCountryCode()).observe(this, new Observer<List<AtfNewsItem>>() {
             @Override
             public void onChanged(@Nullable List<AtfNewsItem> atfNewsItems) {
                 Log.d(TAG, "Retrieving LiveData using Rooms in AtfNewsItemViewModel");
@@ -333,12 +300,6 @@ public class TopNewsActivity extends AppCompatActivity implements AtfNewsItmAdap
                     String key = mUserFirebaseDatabaseReference.push().getKey();
                     mUserFirebaseDatabaseReference.child(key).orderByChild("email");
                     progressBar.setVisibility(View.GONE);
-                    /*String key = mUserFirebaseDatabaseReference.getKey();
-                    mUserFirebaseDatabaseReference = mUserFirebaseDatabase.getReference().child(key).child(atfFavNewsItem.getTitle());
-                    mUserFirebaseDatabaseReference.setValue(atfFavNewsItem);*/
-                    //String key = mUserFirebaseDatabaseReference.push().getKey();
-                    //mUserFirebaseDatabaseReference.child(key).setValue(atfFavNewsItem);
-
                 }
             }
         });
@@ -392,11 +353,16 @@ public class TopNewsActivity extends AppCompatActivity implements AtfNewsItmAdap
 
 
     private void buildAndExecute(String name) {
+        String newsUrlType = null;
+        if (name != null) {
+            newsUrlType = getNewsCountryCode();
+        }
         if (name.equals(AtfNewsNavigator.settings.name())) {
             Intent FavNewsintent = new Intent(this, SettingsActivity.class);
             startActivity(FavNewsintent);
         } else if (name.equals(AtfNewsNavigator.trending.name())) {
-            showTrendingNewsView();
+            if (newsUrlType != null)
+                showTrendingNewsView(newsUrlType);
         } else if (name.equals(AtfNewsNavigator.favorite.name())) {
             Fragment fragment = new AdMobFragment();
             FragmentManager fragmentManager = getSupportFragmentManager();
@@ -404,11 +370,18 @@ public class TopNewsActivity extends AppCompatActivity implements AtfNewsItmAdap
             transaction.replace(R.id.adView, fragment);
             transaction.addToBackStack(null);
             transaction.commit();
-            /*Intent intent = new Intent(TopNewsActivity.this, AdMobFragment.class);
-            startActivity(intent);*/
-            /*Intent FavNewsintent = new Intent(this, FavNewsDpActivity.class);
-            startActivity(FavNewsintent);*/
         }
+    }
+
+    private String getNewsCountryCode() {
+        Log.d(TAG, "Retrieving news country code");
+        String newsCountryCode = null;
+        if (clickedCountryCode != null) newsCountryCode = clickedCountryCode;
+        else if (PrefUtils.getUrlNewsType(this) != null)
+            newsCountryCode = PrefUtils.getUrlNewsType(this);
+        else newsCountryCode = "us";
+        PrefUtils.setUrlNewsType(newsCountryCode,this);
+        return newsCountryCode;
     }
 
 
@@ -420,27 +393,8 @@ public class TopNewsActivity extends AppCompatActivity implements AtfNewsItmAdap
                 mDb.favoriteAtfNewsItemDAO().insert(new FavoriteAtfNewsItem(getUserEmailId(), mAtfNewsUrl));// emailid and url
                 insertIntoFbAndSave(mAtfNewsUrl); // url
                 progressBar.setVisibility(View.GONE);
-
-
             }
         });
-
-
-       /* UserViewModel viewModel = ViewModelProviders.of(this).get(UserViewModel.class);
-
-        viewModel.getUserDAO().findUserWithId(PrefUtils.getCurrentUser(TopNewsActivity.this).id);
-
-        viewModel.getUserDAO().findUserWithId(PrefUtils.getCurrentUser(TopNewsActivity.this).id).observe(this, new Observer<User>() {
-            @Override
-            public void onChanged(@Nullable User liveUser) {
-                Log.d(TAG, "Retrieving LiveData using Rooms in FavoriteNewsViewModel");
-                userId = liveUser.getId();
-                addToFavorite(userId, editor, mAtfNewsItemList.get(clickedIndex), mAtfNewsItemList.get(clickedIndex).getUrl());
-
-            }
-        });
-
-*/
     }
 
 
@@ -489,9 +443,9 @@ public class TopNewsActivity extends AppCompatActivity implements AtfNewsItmAdap
         });
     }
 
-    private void showTrendingNewsView() {
+    private void showTrendingNewsView(String atfNewsUrlType) {
         if (Utils.isNetworkAvailable(this)) {
-            URL newsApiUrl = NetworkUtils.buildUrl();
+            URL newsApiUrl = NetworkUtils.buildUrl(atfNewsUrlType);
             new AsyncHttpTaskForNewsApiDataDownload().execute(newsApiUrl);
         } else {
             //offline loading
@@ -519,21 +473,11 @@ public class TopNewsActivity extends AppCompatActivity implements AtfNewsItmAdap
         Toast.makeText(this, "Clicked at news item number:" + clickedIndex, Toast.LENGTH_SHORT);
         clickedItemIndex = clickedIndex;
         addToFavWithUser(clickedIndex);
-       /* Glide.with(this)
-                .load(R.drawable.loveenabled)
-                .asBitmap()
-                .override(160, 120)
-                .into(favIconInactive);*/
-
-
     }
 
     @Override
     public void onRemoveFavAtfNewsItemClickAtAtfNewsActivity(AtfNewsItem atfNewsItem, int clickedIndex) {
         removeFavWithUser(clickedIndex);
-        //new AsyncDBTaskForFavNewsDeletion().execute(atfNewsItem);
-        /*Intent iFavIntent = new Intent(this, FavNewsRmActivity.class);
-        startActivity(iFavIntent);*/
     }
 
     public static boolean isTablet(Context context) {
@@ -553,7 +497,3 @@ public class TopNewsActivity extends AppCompatActivity implements AtfNewsItmAdap
         Glide.get(this).clearMemory();
     }
 }
-
-//Settings
-//widget
-//snackbar

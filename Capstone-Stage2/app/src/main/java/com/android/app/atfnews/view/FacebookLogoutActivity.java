@@ -7,6 +7,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -20,8 +22,11 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
-public class FacebookLogoutActivity extends Activity {
+
+public class FacebookLogoutActivity extends AppCompatActivity {
 
     private static final String TAG = "FacebookLogoutActivity";
 
@@ -30,16 +35,23 @@ public class FacebookLogoutActivity extends Activity {
     private ImageView profileImage;
     private ProgressDialog progressDialog;
     Bitmap bitmap;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_logout_facebook);
         user= PrefUtils.getCurrentUser(FacebookLogoutActivity.this);
+        ButterKnife.bind(this);
+        this.setSupportActionBar(toolbar);
+        if(null != this.getSupportActionBar()){
+            this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         profileImage= (ImageView) findViewById(R.id.profileImage);
         progressDialog = new ProgressDialog(FacebookLogoutActivity.this);
         progressDialog.setMessage("Loading...");
         progressDialog.show();
-
         // fetching facebook's profile picture
         new AsyncTask<Void,Void,Void>(){
             @Override

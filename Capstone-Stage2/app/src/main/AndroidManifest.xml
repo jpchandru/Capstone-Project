@@ -55,13 +55,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".view.FacebookLoginActivity" />
-        <activity android:name=".view.FacebookLogoutActivity" />
         <activity android:name=".view.GoogleLoginActivity" />
-        <activity android:name=".view.GoogleLogoutActivity" />
         <activity android:name=".view.EmailLoginActivity" />
-        <activity android:name=".view.EmailLogoutActivity" />
         <activity android:name=".view.SettingsActivity" />
-        <activity android:name=".view.AdMobFragment"/>
 
         <activity
             android:name=".view.TopNewsActivity"
@@ -72,10 +68,39 @@
             android:label="@string/title_activity_fav_news"
             android:theme="@style/AppTheme"
             android:parentActivityName=".view.TopNewsActivity"></activity>
+        <activity
+            android:name=".view.GoogleLogoutActivity"
+            android:label="@string/action_settings"
+            android:theme="@style/AppTheme"
+            android:parentActivityName=".view.TopNewsActivity"></activity>
+        <activity
+            android:name=".view.FacebookLogoutActivity"
+            android:label="@string/action_settings"
+            android:theme="@style/AppTheme"
+            android:parentActivityName=".view.TopNewsActivity"></activity>
+        <activity
+            android:name=".view.EmailLogoutActivity"
+            android:label="@string/action_settings"
+            android:theme="@style/AppTheme"
+            android:parentActivityName=".view.TopNewsActivity"></activity>
 
         <meta-data
             android:name="android.support.PARENT_ACTIVITY"
             android:value=".view.TopNewsActivity"/>
+
+        <receiver android:name=".controller.WorldNewsWidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/atfnews_widget_provider_info" />
+        </receiver>
+
+        <service android:name=".controller.AtfNewsWidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
+
         />
 
     </application>

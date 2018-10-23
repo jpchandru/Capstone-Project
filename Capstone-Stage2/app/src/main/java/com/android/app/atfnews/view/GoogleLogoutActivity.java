@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -44,6 +45,8 @@ public class GoogleLogoutActivity extends AppCompatActivity implements
     Context mContext = this;
     @BindView(R.id.btnLogout) TextView btnLogout;
     @BindView(R.id.profileImage) ImageView profileImage;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +54,8 @@ public class GoogleLogoutActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_logout_google);
         ButterKnife.bind(this);
         user = PrefUtils.getCurrentUser(GoogleLogoutActivity.this);
+        this.setSupportActionBar(toolbar);
+        this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // fetching profile picture
         new AsyncTask<Void, Void, Void>() {

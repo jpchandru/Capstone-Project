@@ -1,6 +1,5 @@
 package com.android.app.atfnews.view;
 
-import android.app.ProgressDialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -90,6 +89,7 @@ public class FavNewsDpActivity extends AppCompatActivity implements AtfNewsItmAd
 
 
     private void setmFavNewsRecyclerView(List<AtfNewsItem> atfNewsItems, Boolean isFavItem) {
+
         mFavAtfNewsItemAdapter = new AtfNewsItmAdapter(FavNewsDpActivity.this, atfNewsItems, isFavItem, this);
         mRecyclerView.setAdapter(mFavAtfNewsItemAdapter);
         mFavAtfNewsItemAdapter.notifyDataSetChanged();
@@ -111,7 +111,7 @@ public class FavNewsDpActivity extends AppCompatActivity implements AtfNewsItmAd
                 if (atfNewsItemListLocal != null && atfNewsItemListLocal.size() > 0) {
                     setmFavNewsRecyclerView(atfNewsItemListLocal, true);
                     progressBar.setVisibility(View.GONE);
-                    Toast.makeText(FavNewsDpActivity.this, "Enjoy your favourite news", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(FavNewsDpActivity.this, "Enjoy your favourite news", Toast.LENGTH_SHORT).show();
                 } else {
                     Log.d(TAG, "Retrieving Firebase data for users favorite news during device change ..");
                     // check if it exists in fb
@@ -151,7 +151,7 @@ public class FavNewsDpActivity extends AppCompatActivity implements AtfNewsItmAd
                     atfNewsItemFbCopy.setAuthor(favAtfNewsItemFbCopy.getAuthor());
                     atfNewsItemFbCopy.setCategory(favAtfNewsItemFbCopy.getCategory());
                     atfNewsItemFbCopy.setContent(favAtfNewsItemFbCopy.getContent());
-                    atfNewsItemFbCopy.setCountry(favAtfNewsItemFbCopy.getCountry());
+                    atfNewsItemFbCopy.setCountry(getNewCountryCode());
                     atfNewsItemFbCopy.setDescription(favAtfNewsItemFbCopy.getDescription());
                     atfNewsItemFbCopy.setEmailId(favAtfNewsItemFbCopy.getEmailId());
                     atfNewsItemFbCopy.setImgUrl(favAtfNewsItemFbCopy.getImgUrl());
@@ -175,6 +175,10 @@ public class FavNewsDpActivity extends AppCompatActivity implements AtfNewsItmAd
         mUserFirebaseDatabaseReference.addValueEventListener(valueEventListener);
     }
 
+    private String getNewCountryCode(){
+        return PrefUtils.getUrlNewsType(this);
+    }
+
     @Override
     public void onAtfNewsItemClick(int clickedIndex) {
 
@@ -187,13 +191,6 @@ public class FavNewsDpActivity extends AppCompatActivity implements AtfNewsItmAd
 
     @Override
     public void onRemoveFavAtfNewsItemClickAtAtfNewsActivity(AtfNewsItem atfNewsItem, int clickedIndex) {
-        /*Intent iAddFav = new Intent(this, TopNewsActivity.class);
-        iAddFav.putExtra("REMOVEFAVORITEKEY", true);
-        iAddFav.putExtra("REMOVECLICKEDINDEXKEY", clickedIndex);
-        iAddFav.putExtra("ATFNEWSITEMKEY", atfNewsItem);
-        startActivity(iAddFav);*/
-
-        //final String atfnewsItemUrl = mAtfNewsItemList.get(clickedIndex).getUrl();
         final String atfnewsItemUrl = atfNewsItem.getUrl();
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override

@@ -1,0 +1,41 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/widget_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_background"
+    android:orientation="vertical">
+
+    <!--<TextView
+        android:id="@+id/widget_atfnews_trending"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@color/color_background"
+        android:contentDescription="@string/appwidget_trendingnews"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        android:text="@string/appwidget_trendingnews"
+        android:textColor="@android:color/black"
+        android:textSize="24sp" />-->
+
+    <TextView
+        android:id="@+id/widget_atfnews_countryname"
+        style="@style/Base.TextAppearance.AppCompat.Headline"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="1dp"
+        android:fontFamily="sans-serif-condensed"
+        android:textColor="@color/colorPrimary"
+        tools:text="@string/appwidget_atfnews"
+        android:layout_marginStart="1dp" />
+
+    <ListView
+        android:id="@+id/widget_listview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
+
+
+</LinearLayout>

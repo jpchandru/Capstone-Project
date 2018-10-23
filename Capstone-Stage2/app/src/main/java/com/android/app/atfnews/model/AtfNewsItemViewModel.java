@@ -14,15 +14,15 @@ import java.util.List;
 
 public class AtfNewsItemViewModel extends AndroidViewModel {
 
-    private LiveData<List<AtfNewsItem>> atfNewsItemsLiveData;
     private static final String TAG = AtfNewsItemViewModel.class.getSimpleName();
+    private AtfNewsItemDAO atfNewsItemDAO;
 
     public AtfNewsItemViewModel(@NonNull Application application) {
         super(application);
         AppDatabase database = AppDatabase.getsInstance(this.getApplication());
-        Log.d(TAG, "Actively retrieving movies from the Database");
-        atfNewsItemsLiveData = database.atfNewsItemDAO().loadAllAtfNewsItem();
+        Log.d(TAG, "Actively retrieving news from the Database");
+        atfNewsItemDAO = database.atfNewsItemDAO();
     }
 
-    public LiveData<List<AtfNewsItem>> getAtfNewsItemsLiveData(){   return atfNewsItemsLiveData; }
+    public AtfNewsItemDAO getAtfNewsItemsDAO(){   return atfNewsItemDAO; }
 }

@@ -23,8 +23,8 @@ public interface FavoriteAtfNewsItemDAO {
     /*@Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertFavAtfNewsItemFull(FavAtfNewsItemFull favAtfNewsItemFull);*/
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertFavAtfNewsItem(AtfNewsItem atfNewsItem);
+   /* @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertFavAtfNewsItem(AtfNewsItem atfNewsItem);*/
 
     /*@Query("SELECT * FROM user INNER JOIN favoriteatfnewsitem ON user.id=favoriteatfnewsitem.userId WHERE favoriteatfnewsitem.atfNewsItemId=:atfNewsItemId")
     LiveData<List<User>> getUsersForFavoriteNewsItem(final int atfNewsItemId);*/
@@ -35,8 +35,8 @@ public interface FavoriteAtfNewsItemDAO {
     @Query("SELECT * FROM atfnewsitem INNER JOIN favoriteatfnewsitem ON atfnewsitem.url=favoriteatfnewsitem.atfNewsItemId WHERE favoriteatfnewsitem.userId=:emailId and atfnewsitem.url=:url")
     LiveData<AtfNewsItem> getLiveFavouriteNewsItemForUser(final String emailId, final String url);
 
-    @Query("SELECT * FROM favoriteatfnewsitem WHERE favoriteatfnewsitem.userId=:emailId and favoriteatfnewsitem.atfNewsItemId=:url")
-    FavoriteAtfNewsItem getFavouriteNewsItemForUser(final String emailId, final String url);
+    /*@Query("SELECT * FROM favoriteatfnewsitem WHERE favoriteatfnewsitem.userId=:emailId and favoriteatfnewsitem.atfNewsItemId=:url")
+    FavoriteAtfNewsItem getFavouriteNewsItemForUser(final String emailId, final String url);*/
 
     @Delete
     void deleteFavAtfNewsItem(FavoriteAtfNewsItem favoriteAtfNewsItem);
