@@ -199,6 +199,7 @@ public class GoogleLoginActivity extends LoginActivity implements
                 Log.e(TAG, "Login Unsuccessful. ");
                 Toast.makeText(this, "Login Unsuccessful", Toast.LENGTH_SHORT)
                         .show();
+                progressDialog.dismiss();
             }
         }
     }
@@ -285,7 +286,7 @@ public class GoogleLoginActivity extends LoginActivity implements
     protected void onDestroy() {
         super.onDestroy();
         String key = mUserFirebaseDatabaseReference.getKey();
-        mUserFirebaseDatabaseReference.child(key).removeEventListener(valueEventListener);
+        if(valueEventListener != null) mUserFirebaseDatabaseReference.child(key).removeEventListener(valueEventListener);
         Glide.get(this).clearMemory();
     }
 
@@ -338,12 +339,12 @@ public class GoogleLoginActivity extends LoginActivity implements
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
-        progressDialog.dismiss();
+        if (progressDialog != null) progressDialog.dismiss();
     }
 
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        progressDialog.dismiss();
+        if(progressDialog != null)progressDialog.dismiss();
     }
 }

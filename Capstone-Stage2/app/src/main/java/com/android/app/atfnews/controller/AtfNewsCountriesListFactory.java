@@ -66,7 +66,8 @@ public class AtfNewsCountriesListFactory implements RemoteViewsService.RemoteVie
     public RemoteViews getViewAt(int position) {
         RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.widget_list_item);
         String countryCode = atfNewsCountriesArrayList.get(position).getCountryCode();
-        rv.setTextViewText(R.id.widget_atfnews, countryCode);
+        String countryName = atfNewsCountriesArrayList.get(position).getCountryName();
+        rv.setTextViewText(R.id.widget_atfnews, countryName);
         Log.d(TAG, "position: " + position
                 + ", countryCode: " + countryCode);
         Intent fillInIntent = new Intent();

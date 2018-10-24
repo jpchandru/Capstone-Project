@@ -21,6 +21,9 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.ImageViewTarget;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -97,10 +100,15 @@ public class LoginActivity extends AppCompatActivity {
             emailImg.setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {
-                    Intent homeIntent = new Intent(LoginActivity.this, EmailLoginActivity.class);
-                    homeIntent.putExtra("emailLoginText", emailLoginTxt.getText().toString());
-                    startActivity(homeIntent);
-                    finish();
+                    if (!isEmailValid(emailLoginTxt.getText().toString())) {
+                        emailLoginTxt.setError("Invalid Email Address");
+                    }else{
+                        Intent homeIntent = new Intent(LoginActivity.this, EmailLoginActivity.class);
+                        homeIntent.putExtra("emailLoginText", emailLoginTxt.getText().toString());
+                        startActivity(homeIntent);
+                        finish();
+                    }
+
                 }
             });
 
@@ -132,6 +140,8 @@ public class LoginActivity extends AppCompatActivity {
 
 
 
+
+
         final ImageView background = ButterKnife.findById(this, R.id.scrolling_background);
         int[] screenSize = screenSize();
         //load a very big image and resize it, so it fits our needs
@@ -148,6 +158,20 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
 
+    }
+
+    public static boolean isEmailValid(String email) {
+        boolean isValid = false;
+
+        String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
+        CharSequence inputStr = email;
+
+        Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(inputStr);
+        if (matcher.matches()) {
+            isValid = true;
+        }
+        return isValid;
     }
 
     private int[] screenSize() {

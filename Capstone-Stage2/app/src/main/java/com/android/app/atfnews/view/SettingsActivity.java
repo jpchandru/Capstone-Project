@@ -41,6 +41,7 @@ public class SettingsActivity extends AppCompatActivity {
         }*/
         super.onCreate(savedInstanceState);
 
+
         if (PrefUtils.getCurrentUser(SettingsActivity.this) != null && PrefUtils.getCurrentUser(SettingsActivity.this).facebookID != null) {
             Intent homeIntent = new Intent(SettingsActivity.this, FacebookLogoutActivity.class);
             startActivity(homeIntent);

@@ -23,7 +23,15 @@
           }
         },
         {
-          "client_id": "627917997445-voi28eqbqq6nup4e2tpch03j707m6d2c.apps.googleusercontent.com",
+          "client_id": "627917997445-6sc2l1iqrf257ummgqvjsmfpck1pa3v6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.android.app.atfnews",
+            "certificate_hash": "62eb16be7933a47d175558ded36dcae43a4c83a5"
+          }
+        },
+        {
+          "client_id": "627917997445-5p0pkvidev2ohb5hfo6hc8djmodtn1aa.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -40,7 +48,7 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "627917997445-voi28eqbqq6nup4e2tpch03j707m6d2c.apps.googleusercontent.com",
+              "client_id": "627917997445-5p0pkvidev2ohb5hfo6hc8djmodtn1aa.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

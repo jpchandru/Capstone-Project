@@ -11,12 +11,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.android.app.atfnews.R;
-import com.android.app.atfnews.utils.PrefUtils;
+import com.android.app.atfnews.model.AtfNewsUrlType;
 import com.android.app.atfnews.model.User;
+import com.android.app.atfnews.utils.PrefUtils;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
@@ -43,10 +44,14 @@ public class GoogleLogoutActivity extends AppCompatActivity implements
     private User user;
     Bitmap bitmap;
     Context mContext = this;
-    @BindView(R.id.btnLogout) TextView btnLogout;
-    @BindView(R.id.profileImage) ImageView profileImage;
+    @BindView(R.id.profileImage)
+    ImageView profileImage;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+    @BindView(R.id.btnReset)
+    Button resetButton;
+    @BindView(R.id.btnLogout)
+    Button btnLogout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,11 +88,23 @@ public class GoogleLogoutActivity extends AppCompatActivity implements
             }
         }.execute();
 
+        resetButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PrefUtils.setUrlNewsType(AtfNewsUrlType.us.name(), GoogleLogoutActivity.this);
+                Intent i = new Intent(GoogleLogoutActivity.this, TopNewsActivity.class);
+                startActivity(i);
+                finish();
+            }
+        });
+
 
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 PrefUtils.clearCurrentUser(GoogleLogoutActivity.this);
+                PrefUtils.clearUrlNewsType(GoogleLogoutActivity.this);
+                PrefUtils.clearCurrentUserFromFirebase(GoogleLogoutActivity.this);
                 FirebaseAuth.getInstance().signOut();
                 mGoogleApiClient = MyGoogleApiClient_Singleton.getInstance(null).get_GoogleApiClient();
                 if (mGoogleApiClient == null) {

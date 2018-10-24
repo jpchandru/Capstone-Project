@@ -39,12 +39,6 @@ public class PrefUtils {
         return currentUser;
     }
 
-    public static String getUrlNewsType(Context ctx) {
-        ComplexPreferences complexPreferences = ComplexPreferences.getComplexPreferences(ctx, "user_prefs_country_code", 0);
-        String atfNewsUrlType = complexPreferences.getObject("current_country_code", String.class);
-        return atfNewsUrlType;
-    }
-
     public static void clearCurrentUser(Context ctx) {
         ComplexPreferences complexPreferences = ComplexPreferences.getComplexPreferences(ctx, "user_prefs", 0);
         complexPreferences.clearObject();
@@ -57,20 +51,14 @@ public class PrefUtils {
         complexPreferences.commit();
     }
 
-    public static void setFavoriteAtfNews(int userId, int favNewsId, Context ctx) {
-        ComplexPreferences complexPreferences = ComplexPreferences.getComplexPreferences(ctx, "fav_news", 0);
-        complexPreferences.putObject("current_fav_news", favNewsId);
-        complexPreferences.commit();
+    public static String getUrlNewsType(Context ctx) {
+        ComplexPreferences complexPreferences = ComplexPreferences.getComplexPreferences(ctx, "user_prefs_country_code", 0);
+        String atfNewsUrlType = complexPreferences.getObject("current_country_code", String.class);
+        return atfNewsUrlType;
     }
 
-    public static String getFavoriteAtfNews(Context ctx) {
-        ComplexPreferences complexPreferences = ComplexPreferences.getComplexPreferences(ctx, "fav_news", 0);
-        String favNewsId = complexPreferences.getObject("current_fav_news", String.class);
-        return favNewsId;
-    }
-
-    public static void clearFavoriteAtfNews(Context ctx) {
-        ComplexPreferences complexPreferences = ComplexPreferences.getComplexPreferences(ctx, "fav_news", 0);
+    public static void clearUrlNewsType(Context ctx) {
+        ComplexPreferences complexPreferences = ComplexPreferences.getComplexPreferences(ctx, "user_prefs_country_code", 0);
         complexPreferences.clearObject();
         complexPreferences.commit();
     }

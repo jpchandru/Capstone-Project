@@ -10,9 +10,11 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.app.atfnews.model.AtfNewsUrlType;
 import com.android.app.atfnews.utils.PrefUtils;
 import com.android.app.atfnews.R;
 import com.android.app.atfnews.model.User;
@@ -29,14 +31,16 @@ import butterknife.ButterKnife;
 public class FacebookLogoutActivity extends AppCompatActivity {
 
     private static final String TAG = "FacebookLogoutActivity";
-
-    private TextView btnLogout;
     private User user;
     private ImageView profileImage;
     private ProgressDialog progressDialog;
     Bitmap bitmap;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+    @BindView(R.id.btnReset)
+    Button resetButton;
+    @BindView(R.id.btnLogout)
+    Button btnLogout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,13 +82,23 @@ public class FacebookLogoutActivity extends AppCompatActivity {
             }
         }.execute();
 
+        resetButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PrefUtils.setUrlNewsType(AtfNewsUrlType.us.name(), FacebookLogoutActivity.this);
+                Intent i= new Intent(FacebookLogoutActivity.this,TopNewsActivity.class);
+                startActivity(i);
+                finish();
+            }
+        });
 
-        btnLogout = (TextView) findViewById(R.id.btnLogout);
+
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 PrefUtils.clearCurrentUser(FacebookLogoutActivity.this);
                 PrefUtils.clearCurrentUserFromFirebase(FacebookLogoutActivity.this);
+                PrefUtils.clearUrlNewsType(FacebookLogoutActivity.this);
                 // We can logout from facebook by calling following method
                 LoginManager.getInstance().logOut();
                 Intent i= new Intent(FacebookLogoutActivity.this,LoginActivity.class);

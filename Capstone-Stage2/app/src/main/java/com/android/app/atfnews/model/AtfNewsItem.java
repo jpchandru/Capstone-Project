@@ -1,6 +1,7 @@
 package com.android.app.atfnews.model;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
@@ -54,6 +55,7 @@ public class AtfNewsItem implements Parcelable {
     @SerializedName("category")
     private String category;
 
+    @Ignore
     public AtfNewsItem() {
 
     }

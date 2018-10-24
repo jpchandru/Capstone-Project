@@ -51,7 +51,6 @@ public class FavNewsDpActivity extends AppCompatActivity implements AtfNewsItmAd
     @BindView(R.id.spinner)
     ProgressBar progressBar;
     LinearLayoutManager layoutManager;
-    private String userId;
     private FirebaseFavAtfNewsItem firebaseFavAtfNewsItem;
     SharedPreferences sharedPreferences;
     private FirebaseDatabase mUserFirebaseDatabase;
@@ -136,14 +135,17 @@ public class FavNewsDpActivity extends AppCompatActivity implements AtfNewsItmAd
         favAtfNewsItemListFb = new ArrayList<FirebaseFavAtfNewsItem>();
         atfNewsItemList = new ArrayList<AtfNewsItem>();
         valueEventListener = (new ValueEventListener() {
+            Boolean dataRead= false;
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                // progressDialog.show();
-                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                    String key = dataSnapshot1.getKey();
-                    firebaseFavAtfNewsItem = dataSnapshot1.getValue(FirebaseFavAtfNewsItem.class);
-                    if (firebaseFavAtfNewsItem != null && firebaseFavAtfNewsItem.getEmailId().equalsIgnoreCase(getUserEmailId())) {
-                        favAtfNewsItemListFb.add(firebaseFavAtfNewsItem);
+                if(!dataRead){
+                    for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                        String key = dataSnapshot1.getKey();
+                        firebaseFavAtfNewsItem = dataSnapshot1.getValue(FirebaseFavAtfNewsItem.class);
+                        if (firebaseFavAtfNewsItem != null && firebaseFavAtfNewsItem.getEmailId().equalsIgnoreCase(getUserEmailId())) {
+                            favAtfNewsItemListFb.add(firebaseFavAtfNewsItem);
+                        }
+                        dataRead = true;
                     }
                 }
                 for (FirebaseFavAtfNewsItem favAtfNewsItemFbCopy : favAtfNewsItemListFb) {
@@ -151,7 +153,7 @@ public class FavNewsDpActivity extends AppCompatActivity implements AtfNewsItmAd
                     atfNewsItemFbCopy.setAuthor(favAtfNewsItemFbCopy.getAuthor());
                     atfNewsItemFbCopy.setCategory(favAtfNewsItemFbCopy.getCategory());
                     atfNewsItemFbCopy.setContent(favAtfNewsItemFbCopy.getContent());
-                    atfNewsItemFbCopy.setCountry(getNewCountryCode());
+                    atfNewsItemFbCopy.setCountry(favAtfNewsItemFbCopy.getCountry());
                     atfNewsItemFbCopy.setDescription(favAtfNewsItemFbCopy.getDescription());
                     atfNewsItemFbCopy.setEmailId(favAtfNewsItemFbCopy.getEmailId());
                     atfNewsItemFbCopy.setImgUrl(favAtfNewsItemFbCopy.getImgUrl());
@@ -257,10 +259,11 @@ public class FavNewsDpActivity extends AppCompatActivity implements AtfNewsItmAd
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        progressBar.setVisibility(View.GONE);
-        String key = mUserFirebaseDatabaseReference.getKey();
-        if (valueEventListener != null)
+        if(progressBar != null) progressBar.setVisibility(View.GONE);
+        if (mUserFirebaseDatabaseReference != null && valueEventListener != null) {
+            String key = mUserFirebaseDatabaseReference.getKey();
             mUserFirebaseDatabaseReference.child(key).removeEventListener(valueEventListener);
+        }
         Glide.get(this).clearMemory();
     }
 

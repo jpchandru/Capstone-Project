@@ -1,1 +1,1 @@
-include ':app', ':backend', ':atfnewsdisplayandroidlibrary', ':atfnewsprocessorandroidlibrary', ':atfnewsjavalibrary'
+include ':app'

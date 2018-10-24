@@ -202,9 +202,11 @@ public class EmailLoginActivity extends LoginActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        progressDialog.dismiss();
-        String key = mUserFirebaseDatabaseReference.getKey();
-        mUserFirebaseDatabaseReference.child(key).removeEventListener(valueEventListener);
+        if(progressDialog != null) progressDialog.dismiss();
+        if (mUserFirebaseDatabaseReference != null && valueEventListener != null) {
+            String key = mUserFirebaseDatabaseReference.getKey();
+            mUserFirebaseDatabaseReference.child(key).removeEventListener(valueEventListener);
+        }
         Glide.get(this).clearMemory();
     }
 

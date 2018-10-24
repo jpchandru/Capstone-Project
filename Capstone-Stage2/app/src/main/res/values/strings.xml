@@ -31,8 +31,12 @@
 
     <string name="appwidget_atfnews">ATF News</string>
     <string name="appwidget_countrynames">ATF World News</string>
+    <string name="reset_to_default_news_location">Reset to default news location</string>
+    <string name="logout_from_google">Logout from Google</string>
+    <string name="profileimage">profileimage</string>
+    <string name="logout_from_facebook">Logout from Facebook</string>
+    <string name="logout">Logout</string>
 
 
 </resources>
-
 

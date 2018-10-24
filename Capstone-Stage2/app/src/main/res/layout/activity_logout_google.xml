@@ -1,5 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -7,21 +8,47 @@
         android:id="@+id/toolbar"
         layout="@layout/toolbar" />
 
-    <ImageView
-        android:layout_centerInParent="true"
-        android:id="@+id/profileImage"
-        android:background="@mipmap/ic_launcher"
+    <Button
+        android:id="@+id/btnReset"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-    <TextView android:text="Logout from Google"
-        android:layout_marginTop="16dp"
-        android:id="@+id/btnLogout"
+        android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="150dp"
+        android:background="@color/color_listItem"
         android:padding="16dp"
-        android:layout_below="@+id/profileImage"
-        android:background="#494949"
-        android:textColor="#fff"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:text="@string/reset_to_default_news_location"
+        android:textSize="18sp"
+        android:textColor="@color/colorPrimaryDark" />
+
+    <ImageView
+
+        android:id="@+id/profileImage"
+        android:layout_width="61dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnReset"
+        android:layout_alignStart="@+id/btnReset"
+        android:layout_alignLeft="@+id/btnReset"
+        android:layout_marginStart="-6dp"
+        android:layout_marginLeft="-6dp"
+        android:layout_marginTop="68dp"
+        android:background="@mipmap/ic_launcher"
+        android:contentDescription="@string/profileimage" />
+
+    <Button
+        android:id="@+id/btnLogout"
+        android:layout_width="279dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnReset"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="7dp"
+        android:layout_marginTop="63dp"
+        android:layout_toRightOf="@+id/profileImage"
+        android:background="@color/color_listItem"
+        android:padding="16dp"
+        android:text="@string/logout_from_google"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="18sp"
+        android:layout_marginStart="7dp"
+        android:layout_toEndOf="@+id/profileImage" />
 
 </RelativeLayout>
