@@ -1,8 +1,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/cardview_dark_background">
 
     <include
         android:id="@+id/toolbar"
@@ -14,23 +14,21 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="150dp"
-        android:background="@color/color_listItem"
+        android:background="@color/browser_actions_title_color"
         android:padding="16dp"
         android:text="@string/reset_to_default_news_location"
-        android:textSize="18sp"
-        android:textColor="@color/colorPrimaryDark" />
+        android:textColor="@color/color_logo"
+        android:textSize="18sp" />
 
     <ImageView
 
         android:id="@+id/profileImage"
-        android:layout_width="61dp"
-        android:layout_height="wrap_content"
+        android:layout_width="65dp"
+        android:layout_height="60dp"
         android:layout_below="@+id/btnReset"
         android:layout_alignStart="@+id/btnReset"
-        android:layout_alignLeft="@+id/btnReset"
-        android:layout_marginStart="-6dp"
-        android:layout_marginLeft="-6dp"
-        android:layout_marginTop="68dp"
+        android:layout_marginStart="-5dp"
+        android:layout_marginTop="65dp"
         android:background="@mipmap/ic_launcher"
         android:contentDescription="@string/profileimage" />
 
@@ -40,15 +38,12 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/btnReset"
         android:layout_centerHorizontal="true"
-        android:layout_marginLeft="7dp"
+        android:layout_marginStart="7dp"
         android:layout_marginTop="63dp"
-        android:layout_toRightOf="@+id/profileImage"
-        android:background="@color/color_listItem"
+        android:layout_toEndOf="@+id/profileImage"
+        android:background="@color/browser_actions_title_color"
         android:padding="16dp"
         android:text="@string/logout_from_google"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="18sp"
-        android:layout_marginStart="7dp"
-        android:layout_toEndOf="@+id/profileImage" />
+        android:textSize="18sp" />
 
 </RelativeLayout>

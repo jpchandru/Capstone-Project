@@ -1,11 +1,9 @@
 package com.android.app.atfnews.controller;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
-import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,31 +26,35 @@ public class AtfNewsItmAdapter extends RecyclerView.Adapter<AtfNewsItmAdapter.At
     List<AtfNewsItem> mAtfNewsItemList, mFavAtfNewsItemList;
     Context mContext;
     Boolean isFavItem = false;
+    Boolean isTablet = false;
     public AtfNewsItemClickListener mOnClickListener;
 
     public interface AtfNewsItemClickListener {
         void onAtfNewsItemClick(int clickedIndex);
+
         void onAddFavAtfNewsItemClickAtAtfNewsActivity(int clickedIndex);
+
         void onRemoveFavAtfNewsItemClickAtAtfNewsActivity(AtfNewsItem atfNewsItem, int clickedIndex);
     }
 
-
-    public AtfNewsItmAdapter(Context context, List<AtfNewsItem> atfNewsItemList, Boolean isFavItem, AtfNewsItemClickListener listener) {
+    public AtfNewsItmAdapter(Context context, List<AtfNewsItem> atfNewsItemList, Boolean isFavItem, AtfNewsItemClickListener listener, boolean isTablet) {
         this.mContext = context;
         this.mAtfNewsItemList = atfNewsItemList;
         this.isFavItem = isFavItem;
         this.mOnClickListener = listener;
+        this.isTablet = isTablet;
     }
    /* public AtfNewsItemAdapter(Context context, List<AtfNewsItem> atfNewsItemList) {
         this.mContext = context;
         this.mAtfNewsItemList = atfNewsItemList;
     }*/
 
-    public AtfNewsItmAdapter(Context context, List<AtfNewsItem> atfNewsItemList, List<AtfNewsItem> mFavAtfNewsItemList, AtfNewsItemClickListener listener) {
+    public AtfNewsItmAdapter(Context context, List<AtfNewsItem> atfNewsItemList, List<AtfNewsItem> mFavAtfNewsItemList, AtfNewsItemClickListener listener, boolean isTablet) {
         this.mContext = context;
         this.mAtfNewsItemList = atfNewsItemList;
         this.mFavAtfNewsItemList = mFavAtfNewsItemList;
         this.mOnClickListener = listener;
+        this.isTablet = isTablet;
     }
 
     @Override
@@ -92,8 +94,8 @@ public class AtfNewsItmAdapter extends RecyclerView.Adapter<AtfNewsItmAdapter.At
         }
 
         public void bindTo(final AtfNewsItem atfNewsItem, List<AtfNewsItem> mFavAtfNewsItemList) {
-            if((mFavAtfNewsItemList != null && mFavAtfNewsItemList.size() > 0 && mFavAtfNewsItemList.contains(atfNewsItem))
-                    ||isFavItem){
+            if ((mFavAtfNewsItemList != null && mFavAtfNewsItemList.size() > 0 && mFavAtfNewsItemList.contains(atfNewsItem))
+                    || isFavItem) {
                 favIconInActive.setVisibility(View.GONE);
                 //loveIconEnabledImg = favIcon;
                 //Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.loveenabled);
@@ -101,31 +103,40 @@ public class AtfNewsItmAdapter extends RecyclerView.Adapter<AtfNewsItmAdapter.At
                 //loveIconEnabledImg.setVisibility(View.VISIBLE);
                 //favIcon.setImageBitmap(bitmap);
                 favIconActive.setVisibility(View.VISIBLE);
-            }else{
+            } else {
                 favIconActive.setVisibility(View.GONE);
                 favIconInActive.setVisibility(View.VISIBLE);
             }
-            if(!atfNewsItem.getTitle().equals(""))
-                if(atfNewsItem.getTitle().length() >= 50)
-                    atfNewsItemTitleTextVIew.setText(atfNewsItem.getTitle().substring(0,50)+"...");
-                else
-                    atfNewsItemTitleTextVIew.setText(atfNewsItem.getTitle());
-                // Check if there is a atfNewsItem image. If so, load it in the ImageView
-                String atfNewsItemImageString = atfNewsItem.getImgUrl();
-                if (atfNewsItemImageString != null && !atfNewsItemImageString.equalsIgnoreCase("null") ) {
-                    Picasso.get().load(atfNewsItemImageString)
-                            .resize(160, 120)
-                            .into(atfNewsItemImageView);
-
-
-                }else{
-                    Glide.with(mContext)
-                            .load(R.drawable.noimageavailable)
-                            .asBitmap()
-                            .override(160, 120)
-                            .into(atfNewsItemImageView);
-
+            if (!atfNewsItem.getTitle().equals("")) {
+                if (mContext.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    if (atfNewsItem.getTitle().length() > 75 && isTablet)
+                        atfNewsItemTitleTextVIew.setText(atfNewsItem.getTitle().substring(0, 80) + "...");
+                    else
+                        atfNewsItemTitleTextVIew.setText(atfNewsItem.getTitle());
+                } else if (mContext.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                    if (atfNewsItem.getTitle().length() > 50)
+                        atfNewsItemTitleTextVIew.setText(atfNewsItem.getTitle().substring(0, 50) + "...");
+                    else
+                        atfNewsItemTitleTextVIew.setText(atfNewsItem.getTitle());
                 }
+            }
+
+            // Check if there is a atfNewsItem image. If so, load it in the ImageView
+            String atfNewsItemImageString = atfNewsItem.getImgUrl();
+            if (atfNewsItemImageString != null && !atfNewsItemImageString.equalsIgnoreCase("null")) {
+                Picasso.get().load(atfNewsItemImageString)
+                        .resize(160, 120)
+                        .into(atfNewsItemImageView);
+
+
+            } else {
+                Glide.with(mContext)
+                        .load(R.drawable.noimageavailable)
+                        .asBitmap()
+                        .override(160, 120)
+                        .into(atfNewsItemImageView);
+
+            }
 
             favIconInActive.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -153,26 +164,10 @@ public class AtfNewsItmAdapter extends RecyclerView.Adapter<AtfNewsItmAdapter.At
                 }
             });
 
-           // Snackbar.make(mCLayout,"Load failed.",Snackbar.LENGTH_LONG).show();
+            // Snackbar.make(mCLayout,"Load failed.",Snackbar.LENGTH_LONG).show();
         }
 
 
-
-       /* @Override
-        public void onClick(View itemView) {
-            int adapterPosition = getAdapterPosition();
-            Intent intent = new Intent(itemView.getContext(), MovieDetailsActivity.class);
-            // Using Parcelable
-            final MovieItem movie = movieList.get(adapterPosition);
-            intent.putExtra("mSelected", movie);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            try {
-
-                MoviesAdapter.this.mContext.startActivity(intent);
-            } catch (RuntimeException e) {
-                Log.d(MoviesAdapter.class.getSimpleName(), e.getMessage());
-            }
-        }*/
 
 
         @Override

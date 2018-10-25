@@ -12,7 +12,7 @@ import android.widget.RemoteViews;
 import com.android.app.atfnews.R;
 import com.android.app.atfnews.model.AtfNewsUrlType;
 import com.android.app.atfnews.utils.PrefUtils;
-import com.android.app.atfnews.view.TopNewsActivity;
+import com.android.app.atfnews.view.LoginActivity;
 
 /**
  * Implementation of App Widget functionality.
@@ -28,17 +28,18 @@ public class WorldNewsWidgetProvider extends AppWidgetProvider {
         Intent countriesIntent = new Intent(context, AtfNewsWidgetService.class);
         countriesIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         // Create an intent to launch TopNewsActivity when clicked
-        Intent intent = new Intent(context, TopNewsActivity.class);
+        Intent intent = new Intent(context, LoginActivity.class);
         intent.putExtra("country_code", PrefUtils.getUrlNewsType(context));
+
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.atfnews_widget_provider);
         // Click handler will allow launching the PendingIntent
         views.setOnClickPendingIntent(R.id.widget_container, pendingIntent);
-        views.setTextViewText(R.id.widget_atfnews_countryname, "ATF World News");
         Log.d(TAG, "Country name header has been successfully inserted: " + "Country Name");
         views.setRemoteAdapter(R.id.widget_listview, countriesIntent);
-        Intent clickIntentTemplate = new Intent(context, TopNewsActivity.class);
+
+        Intent clickIntentTemplate = new Intent(context, LoginActivity.class);
         PendingIntent clickPendingIntentTemplate = TaskStackBuilder.create(context)
                 .addNextIntentWithParentStack(clickIntentTemplate)
                 .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);

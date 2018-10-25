@@ -3,23 +3,18 @@ package com.android.app.atfnews.view;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Display;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.app.atfnews.R;
 import com.android.app.atfnews.model.User;
 import com.android.app.atfnews.utils.PrefUtils;
 import com.android.app.atfnews.utils.Utils;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.target.ImageViewTarget;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,13 +29,16 @@ public class LoginActivity extends AppCompatActivity {
     private User user;
     private final Context mContext = this;
     @BindView(R.id.first)
-    ImageView facebookImg;
+    Button facebookImg;
     @BindView(R.id.second)
-    ImageView googleImg;
+    Button googleImg;
     @BindView(R.id.login_with_email)
-    ImageView emailImg;
+    Button emailImg;
     @BindView(R.id.email_login_text)
     EditText emailLoginTxt;
+    @BindView(R.id.spinner)
+    ProgressBar progressBar;
+    String countryCode, clickedCountryCode = null;
 
 
     @Override
@@ -68,21 +66,28 @@ public class LoginActivity extends AppCompatActivity {
         }*/
 
 
-
         if (PrefUtils.getCurrentUser(LoginActivity.this) != null) {
+            getIntentFromWidgetForLogin();
             Intent homeIntent = new Intent(LoginActivity.this, TopNewsActivity.class);
+            homeIntent.putExtra("countryCode", countryCode);
+            homeIntent.putExtra("clickedCountryCode", clickedCountryCode);
             startActivity(homeIntent);
             finish();
         }
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_login);
-            ButterKnife.bind(this);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_login);
+        ButterKnife.bind(this);
 
         if (Utils.isNetworkAvailable(mContext)) {
             facebookImg.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
                     Intent homeIntent = new Intent(LoginActivity.this, FacebookLoginActivity.class);
+                    getIntentFromWidgetForLogin();
+                    homeIntent.putExtra("countryCode", countryCode);
+                    homeIntent.putExtra("clickedCountryCode", clickedCountryCode);
+                    progressBar.setVisibility(View.VISIBLE);
                     startActivity(homeIntent);
                     finish();
                 }
@@ -92,19 +97,27 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Intent homeIntent = new Intent(LoginActivity.this, GoogleLoginActivity.class);
+                    getIntentFromWidgetForLogin();
+                    homeIntent.putExtra("countryCode", countryCode);
+                    homeIntent.putExtra("clickedCountryCode", clickedCountryCode);
+                    progressBar.setVisibility(View.VISIBLE);
                     startActivity(homeIntent);
                     finish();
                 }
             });
 
-            emailImg.setOnClickListener(new View.OnClickListener(){
+            emailImg.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (!isEmailValid(emailLoginTxt.getText().toString())) {
                         emailLoginTxt.setError("Invalid Email Address");
-                    }else{
+                    } else {
                         Intent homeIntent = new Intent(LoginActivity.this, EmailLoginActivity.class);
+                        getIntentFromWidgetForLogin();
+                        homeIntent.putExtra("countryCode", countryCode);
+                        homeIntent.putExtra("clickedCountryCode", clickedCountryCode);
                         homeIntent.putExtra("emailLoginText", emailLoginTxt.getText().toString());
+                        progressBar.setVisibility(View.VISIBLE);
                         startActivity(homeIntent);
                         finish();
                     }
@@ -112,7 +125,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
             });
 
-        }else{
+        } else {
             facebookImg.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -126,11 +139,15 @@ public class LoginActivity extends AppCompatActivity {
                 }
             });
 
-            emailImg.setOnClickListener(new View.OnClickListener(){
+            emailImg.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent homeIntent = new Intent(LoginActivity.this, EmailLoginActivity.class);
+                    getIntentFromWidgetForLogin();
+                    homeIntent.putExtra("countryCode", countryCode);
+                    homeIntent.putExtra("clickedCountryCode", clickedCountryCode);
                     homeIntent.putExtra("emailLoginText", emailLoginTxt.getText().toString());
+                    progressBar.setVisibility(View.VISIBLE);
                     startActivity(homeIntent);
                     finish();
                 }
@@ -138,11 +155,10 @@ public class LoginActivity extends AppCompatActivity {
 
         }
 
+        progressBar.setVisibility(View.GONE);
 
 
-
-
-        final ImageView background = ButterKnife.findById(this, R.id.scrolling_background);
+        /*final ImageView background = ButterKnife.findById(this, R.id.scrolling_background);
         int[] screenSize = screenSize();
         //load a very big image and resize it, so it fits our needs
         Glide.with(this)
@@ -156,8 +172,19 @@ public class LoginActivity extends AppCompatActivity {
                         background.setImageBitmap(resource);
 
                     }
-                });
+                });*/
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        //do nothing
+    }
+
+    private void getIntentFromWidgetForLogin() {
+        Intent i = getIntent();
+        countryCode = i.getStringExtra("country_code");
+        clickedCountryCode = i.getStringExtra("clicked_country_code");
     }
 
     public static boolean isEmailValid(String email) {
@@ -174,12 +201,12 @@ public class LoginActivity extends AppCompatActivity {
         return isValid;
     }
 
-    private int[] screenSize() {
+    /*private int[] screenSize() {
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
         return new int[]{size.x, size.y};
-    }
+    }*/
 
 
 }

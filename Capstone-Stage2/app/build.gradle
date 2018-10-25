@@ -35,7 +35,7 @@ android {
     buildToolsVersion "27.0.3"
     defaultConfig {
         applicationId "com.android.app.atfnews"
-        minSdkVersion 15
+        minSdkVersion 17
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -113,24 +113,3 @@ configurations {
         exclude module: 'commons-logging'
     }
 }
-
-
-android {
-    lintOptions {
-        checkReleaseBuilds false
-        // Or, if you prefer, you can continue to check for errors in release builds,
-        // but continue the build even when errors are found:
-        abortOnError false
-    }
-}
-
-/*configurations.all {
-    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-        def requested = details.requested
-        if (requested.group == 'com.android.support') {
-            if (!requested.name.startsWith("multidex")) {
-                details.useVersion '27.1.1'
-            }
-        }
-    }
-}*/

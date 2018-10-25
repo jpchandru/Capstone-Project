@@ -7,6 +7,8 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.android.app.atfnews.R;
@@ -36,13 +38,14 @@ import java.util.Arrays;
 
 import javax.annotation.Nullable;
 
+import butterknife.BindView;
+
 public class FacebookLoginActivity extends LoginActivity {
 
     private static final String TAG = "FacebookLoginActivity";
     private CallbackManager callbackManager;
-    private LoginButton loginButton;
     private AppDatabase mDb;
-    private ProgressDialog progressDialog;
+    //private ProgressDialog progressDialog;
     private FirebaseDatabase mUserFirebaseDatabase;
     private DatabaseReference mUserFirebaseDatabaseReference;
     private User user;
@@ -52,7 +55,8 @@ public class FacebookLoginActivity extends LoginActivity {
     private ValueEventListener valueEventListener;
     String email = null;
     String emailFromLocalDb = null;
-
+    @BindView(R.id.login_button)
+    LoginButton loginButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,15 +66,15 @@ public class FacebookLoginActivity extends LoginActivity {
             startActivity(homeIntent);
             finish();
         } else {
+            getIntentFromLogin();
             callbackManager = CallbackManager.Factory.create();
-            loginButton = (LoginButton) findViewById(R.id.login_button);
             loginButton.setReadPermissions(Arrays
                     // .asList("email,manage_pages,public_profile,publish_actions,publish_pages,user_friends"));
                     .asList("email,manage_pages,public_profile,publish_pages,user_friends"));
 
-            progressDialog = new ProgressDialog(FacebookLoginActivity.this);
+            /*progressDialog = new ProgressDialog(FacebookLoginActivity.this);
             progressDialog.setMessage("Loading...");
-            progressDialog.show();
+            progressDialog.show();*/
             loginButton.performClick();
             loginButton.setPressed(true);
             loginButton.invalidate();
@@ -84,6 +88,12 @@ public class FacebookLoginActivity extends LoginActivity {
 
     }
 
+    private void getIntentFromLogin() {
+        Intent i = getIntent();
+        countryCode = i.getStringExtra("countryCode");
+        clickedCountryCode = i.getStringExtra("clickedCountryCode");
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -93,7 +103,7 @@ public class FacebookLoginActivity extends LoginActivity {
     private FacebookCallback<LoginResult> mCallBack = new FacebookCallback<LoginResult>() {
         @Override
         public void onSuccess(LoginResult loginResult) {
-            progressDialog.dismiss();
+            progressBar.setVisibility(View.GONE);
             // App code
             GraphRequest request = GraphRequest.newMeRequest(
                     loginResult.getAccessToken(),
@@ -138,6 +148,9 @@ public class FacebookLoginActivity extends LoginActivity {
                             }
                             Toast.makeText(FacebookLoginActivity.this, "welcome " + user.name, Toast.LENGTH_LONG).show();
                             Intent intent = new Intent(FacebookLoginActivity.this, TopNewsActivity.class);
+                            //getIntentFromWidget();
+                            intent.putExtra("countryCode", countryCode);
+                            intent.putExtra("clickedCountryCode", clickedCountryCode);
                             intent.putExtra(USER_OBJECT, user);
                             startActivity(intent);
                             finish();
@@ -152,6 +165,10 @@ public class FacebookLoginActivity extends LoginActivity {
             request.setParameters(parameters);
             request.executeAsync();
         }
+
+
+
+
 
         private void insertOrUpdateFirebaseAtfNewsUser() {
             valueEventListener = (new ValueEventListener() {
@@ -183,12 +200,12 @@ public class FacebookLoginActivity extends LoginActivity {
 
         @Override
         public void onCancel() {
-            progressDialog.dismiss();
+            progressBar.setVisibility(View.GONE);
         }
 
         @Override
         public void onError(FacebookException e) {
-            progressDialog.dismiss();
+            progressBar.setVisibility(View.GONE);
         }
     };
 
@@ -245,7 +262,7 @@ public class FacebookLoginActivity extends LoginActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(progressDialog != null) progressDialog.dismiss();
+        if(progressBar != null) progressBar.setVisibility(View.GONE);
         if (mUserFirebaseDatabaseReference != null && valueEventListener != null) {
             String key = mUserFirebaseDatabaseReference.getKey();
             mUserFirebaseDatabaseReference.child(key).removeEventListener(valueEventListener);

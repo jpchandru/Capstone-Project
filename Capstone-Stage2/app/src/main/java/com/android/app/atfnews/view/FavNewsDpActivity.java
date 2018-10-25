@@ -3,6 +3,7 @@ package com.android.app.atfnews.view;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -43,7 +44,7 @@ public class FavNewsDpActivity extends AppCompatActivity implements AtfNewsItmAd
 
     private static final String TAG = "FavNewsDpActivity.class";
     private AppDatabase mDb;
-    private AtfNewsItmAdapter mAtfNewsItemAdapter, mFavAtfNewsItemAdapter;
+    private AtfNewsItmAdapter mFavAtfNewsItemAdapter;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.rv_newsitem)
@@ -64,12 +65,16 @@ public class FavNewsDpActivity extends AppCompatActivity implements AtfNewsItmAd
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if(getUserEmailId() == null){
+            Intent li = new Intent(FavNewsDpActivity.this, LoginActivity.class);
+            startActivity(li);
+        }
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main_news);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        sharedPreferences = getApplicationContext().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
         mUserFirebaseDatabase = FirebaseDatabase.getInstance();
         mUserFirebaseDatabaseReference = mUserFirebaseDatabase.getReference("favatfnewsitem");
         mDb = AppDatabase.getsInstance(getApplicationContext());
@@ -82,14 +87,22 @@ public class FavNewsDpActivity extends AppCompatActivity implements AtfNewsItmAd
 
     }
 
+    @Override
+    public void onBackPressed() {
+        //do nothing
+    }
+
     private String getUserEmailId() {
-        return PrefUtils.getCurrentUser(FavNewsDpActivity.this).email;
+        if(PrefUtils.getCurrentUser(FavNewsDpActivity.this) != null){
+            return PrefUtils.getCurrentUser(FavNewsDpActivity.this).email;
+        }
+        return null;
     }
 
 
     private void setmFavNewsRecyclerView(List<AtfNewsItem> atfNewsItems, Boolean isFavItem) {
 
-        mFavAtfNewsItemAdapter = new AtfNewsItmAdapter(FavNewsDpActivity.this, atfNewsItems, isFavItem, this);
+        mFavAtfNewsItemAdapter = new AtfNewsItmAdapter(FavNewsDpActivity.this, atfNewsItems, isFavItem, this, TopNewsActivity.isTablet(FavNewsDpActivity.this));
         mRecyclerView.setAdapter(mFavAtfNewsItemAdapter);
         mFavAtfNewsItemAdapter.notifyDataSetChanged();
     }
@@ -104,23 +117,27 @@ public class FavNewsDpActivity extends AppCompatActivity implements AtfNewsItmAd
         mDb = AppDatabase.getsInstance(getApplicationContext());
         FavoriteNewsViewModel viewModel = ViewModelProviders.of(this).get(FavoriteNewsViewModel.class);
         viewModel.getFavoriteAtfNewsItemDAO().getAllFavouriteNewsItemForUser(emailId).observe(this, new Observer<List<AtfNewsItem>>() {
+            Boolean dataRead = false;
             @Override
             public void onChanged(@Nullable List<AtfNewsItem> atfNewsItemListLocal) {
-                Log.d(TAG, "Retrieving LiveData using Rooms in FavoriteNewsViewModel");
-                if (atfNewsItemListLocal != null && atfNewsItemListLocal.size() > 0) {
-                    setmFavNewsRecyclerView(atfNewsItemListLocal, true);
-                    progressBar.setVisibility(View.GONE);
-                    //Toast.makeText(FavNewsDpActivity.this, "Enjoy your favourite news", Toast.LENGTH_SHORT).show();
-                } else {
-                    Log.d(TAG, "Retrieving Firebase data for users favorite news during device change ..");
-                    // check if it exists in fb
-                    if (validNetworkStatus())
-                        chkAndRetrieveFavAtfNewsItemFromFb();
-                    else
-                        Toast.makeText(FavNewsDpActivity.this, "We could retrieve your previously saved favourite news (if any) but you seem to be offline.", Toast.LENGTH_SHORT).show();
+                if (!dataRead) {
+                    Log.d(TAG, "Retrieving LiveData using Rooms in FavoriteNewsViewModel");
+                    if (atfNewsItemListLocal != null && atfNewsItemListLocal.size() > 0) {
+                        setmFavNewsRecyclerView(atfNewsItemListLocal, true);
+                        progressBar.setVisibility(View.GONE);
+                        //Toast.makeText(FavNewsDpActivity.this, "Enjoy your favourite news", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Log.d(TAG, "Retrieving Firebase data for users favorite news during device change ..");
+                        // check if it exists in fb
+                        if (validNetworkStatus())
+                            chkAndRetrieveFavAtfNewsItemFromFb();
+                        else
+                            Toast.makeText(FavNewsDpActivity.this, "We could retrieve your previously saved favourite news (if any) but you seem to be offline.", Toast.LENGTH_SHORT).show();
 
+                    }
+                    dataRead = true;
+                    progressBar.setVisibility(View.GONE);
                 }
-                progressBar.setVisibility(View.GONE);
             }
         });
     }
@@ -135,10 +152,11 @@ public class FavNewsDpActivity extends AppCompatActivity implements AtfNewsItmAd
         favAtfNewsItemListFb = new ArrayList<FirebaseFavAtfNewsItem>();
         atfNewsItemList = new ArrayList<AtfNewsItem>();
         valueEventListener = (new ValueEventListener() {
-            Boolean dataRead= false;
+            Boolean dataRead = false;
+
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(!dataRead){
+                if (!dataRead) {
                     for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
                         String key = dataSnapshot1.getKey();
                         firebaseFavAtfNewsItem = dataSnapshot1.getValue(FirebaseFavAtfNewsItem.class);
@@ -147,21 +165,22 @@ public class FavNewsDpActivity extends AppCompatActivity implements AtfNewsItmAd
                         }
                         dataRead = true;
                     }
-                }
-                for (FirebaseFavAtfNewsItem favAtfNewsItemFbCopy : favAtfNewsItemListFb) {
-                    atfNewsItemFbCopy = new AtfNewsItem();
-                    atfNewsItemFbCopy.setAuthor(favAtfNewsItemFbCopy.getAuthor());
-                    atfNewsItemFbCopy.setCategory(favAtfNewsItemFbCopy.getCategory());
-                    atfNewsItemFbCopy.setContent(favAtfNewsItemFbCopy.getContent());
-                    atfNewsItemFbCopy.setCountry(favAtfNewsItemFbCopy.getCountry());
-                    atfNewsItemFbCopy.setDescription(favAtfNewsItemFbCopy.getDescription());
-                    atfNewsItemFbCopy.setEmailId(favAtfNewsItemFbCopy.getEmailId());
-                    atfNewsItemFbCopy.setImgUrl(favAtfNewsItemFbCopy.getImgUrl());
-                    atfNewsItemFbCopy.setNewsType(favAtfNewsItemFbCopy.getNewsType());
-                    atfNewsItemFbCopy.setPublishDate(favAtfNewsItemFbCopy.getPublishDate());
-                    atfNewsItemFbCopy.setTitle(favAtfNewsItemFbCopy.getTitle());
-                    atfNewsItemFbCopy.setUrl(favAtfNewsItemFbCopy.getUrl());
-                    atfNewsItemList.add(atfNewsItemFbCopy);
+
+                    for (FirebaseFavAtfNewsItem favAtfNewsItemFbCopy : favAtfNewsItemListFb) {
+                        atfNewsItemFbCopy = new AtfNewsItem();
+                        atfNewsItemFbCopy.setAuthor(favAtfNewsItemFbCopy.getAuthor());
+                        atfNewsItemFbCopy.setCategory(favAtfNewsItemFbCopy.getCategory());
+                        atfNewsItemFbCopy.setContent(favAtfNewsItemFbCopy.getContent());
+                        atfNewsItemFbCopy.setCountry(favAtfNewsItemFbCopy.getCountry());
+                        atfNewsItemFbCopy.setDescription(favAtfNewsItemFbCopy.getDescription());
+                        atfNewsItemFbCopy.setEmailId(favAtfNewsItemFbCopy.getEmailId());
+                        atfNewsItemFbCopy.setImgUrl(favAtfNewsItemFbCopy.getImgUrl());
+                        atfNewsItemFbCopy.setNewsType(favAtfNewsItemFbCopy.getNewsType());
+                        atfNewsItemFbCopy.setPublishDate(favAtfNewsItemFbCopy.getPublishDate());
+                        atfNewsItemFbCopy.setTitle(favAtfNewsItemFbCopy.getTitle());
+                        atfNewsItemFbCopy.setUrl(favAtfNewsItemFbCopy.getUrl());
+                        atfNewsItemList.add(atfNewsItemFbCopy);
+                    }
                 }
 
                 setmFavNewsRecyclerView(atfNewsItemList, true);
@@ -177,7 +196,7 @@ public class FavNewsDpActivity extends AppCompatActivity implements AtfNewsItmAd
         mUserFirebaseDatabaseReference.addValueEventListener(valueEventListener);
     }
 
-    private String getNewCountryCode(){
+    private String getNewCountryCode() {
         return PrefUtils.getUrlNewsType(this);
     }
 
@@ -235,7 +254,8 @@ public class FavNewsDpActivity extends AppCompatActivity implements AtfNewsItmAd
                 }
 
                 if (isFavItemDeleted) {
-                    chkAndRetrieveFavAtfNewsItemFromFb();
+                    //chkAndRetrieveFavAtfNewsItemFromFb();
+                    setupFavViewModel(getUserEmailId());
                     String key = mUserFirebaseDatabaseReference.getKey();
                     mUserFirebaseDatabaseReference.child(key).orderByChild("email");
                     progressBar.setVisibility(View.GONE);
@@ -259,7 +279,7 @@ public class FavNewsDpActivity extends AppCompatActivity implements AtfNewsItmAd
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(progressBar != null) progressBar.setVisibility(View.GONE);
+        if (progressBar != null) progressBar.setVisibility(View.GONE);
         if (mUserFirebaseDatabaseReference != null && valueEventListener != null) {
             String key = mUserFirebaseDatabaseReference.getKey();
             mUserFirebaseDatabaseReference.child(key).removeEventListener(valueEventListener);

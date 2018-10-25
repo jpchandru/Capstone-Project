@@ -1,42 +1,41 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:locale="en">
+
     <string name="app_name">ATF News</string>
-    <!--<string name="sign_up_label">Sign Up</string>-->
-    <!--<string name="log_in_label">Log In</string>-->
-    <!--<string name="forgot_password">Forgot Password?</string>-->
-    <!--<string name="password_hint">Password</string>-->
-    <!--<string name="email_hint">Email</string>-->
-    <!--<string name="confirm_hint">Confirm Password</string>-->
     <string name="login_with_email">Login with Email</string>
     <string name="login_with_email_text">Login with Email</string>
     <string name="action_settings">Settings</string>
     <string name="action_trending">Trending</string>
     <string name="action_favorite">Favorite</string>
 
+    <string name="banner_ad_size">BANNER</string>
     <string name="banner_ad_unit_id">Enter here</string>
-    <string name="interstitial_ad_unit_id">Enter here</string>
-    <string name="facebook_app_id">Enter here</string>
-    <string name="fb_login_protocol_scheme">Enter here</string>
-    <string name="firebase_url">Enter here</string>
+    <string name="interstitial_ad_unit_id"></string>
+    <string name="facebook_app_id"></string>
+    <string name="fb_login_protocol_scheme"></string>
+    <string name="firebase_url"></string>
     <string name="title_activity_logout">LogoutActivity</string>
-    <string name="google_web_client_id">Enter here</string>
+    <string name="google_web_client_id"></string>
     <string name="title_activity_trending_news">Trending News</string>
     <string name="title_activity_top_news">Top News</string>
     <string name="title_activity_fav_news">Favorite News</string>
     <string name="news_item">News Item Here</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="remove_favorite">Remove Favorite</string>
     <string name="add_favorite">Add Favorite</string>
     <string name="news_item_image">News Item Image</string>
 
     <string name="appwidget_atfnews">ATF News</string>
-    <string name="appwidget_countrynames">ATF World News</string>
+    <string name="appwidget_atfworldnews">ATF World News</string>
     <string name="reset_to_default_news_location">Reset to default news location</string>
     <string name="logout_from_google">Logout from Google</string>
     <string name="profileimage">profileimage</string>
     <string name="logout_from_facebook">Logout from Facebook</string>
     <string name="logout">Logout</string>
+    <string name="enter_your_email_here">Enter your email here ...</string>
+    <string name="atf_news_background_picture">ATF News background picture</string>
+    <string name="google_signin_image">Google SignIn Image</string>
+    <string name="facebook_login_image">Facebook login image</string>
+    <string name="email_login">Email Login</string>
 
 
 </resources>
-

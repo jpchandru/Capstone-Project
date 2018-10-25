@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/color_toolbar"
+    android:layout_height="?android:attr/actionBarSize"
+    android:background="@color/browser_actions_text_color"
     android:elevation="4dp"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    app:titleTextColor="@color/color_logo"
+    android:theme="@android:style/ThemeOverlay.Material.Dark.ActionBar"
+    tools:targetApi="lollipop" />
+
 

@@ -55,14 +55,11 @@ public class GoogleLoginActivity extends LoginActivity implements
     private FirebaseAtfNewsUser fbUser;
     private FirebaseDatabase mUserFirebaseDatabase;
     private DatabaseReference mUserFirebaseDatabaseReference;
-    ValueEventListener listener;
-    String key;
     private final Context mContext = this;
     private static final String USER_OBJECT = "USER_OBJECT";
     private static final int RC_SIGN_IN = 9001;
-    private ProgressDialog progressDialog;
+   // private ProgressDialog progressDialog;
     private ValueEventListener valueEventListener;
-    String emailFromLocalDb = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,9 +81,10 @@ public class GoogleLoginActivity extends LoginActivity implements
             startActivity(homeIntent);
             finish();
         } else {
-            progressDialog = new ProgressDialog(GoogleLoginActivity.this);
+            /*progressDialog = new ProgressDialog(GoogleLoginActivity.this);
             progressDialog.setMessage("Loading...");
-            progressDialog.show();
+            progressDialog.show();*/
+            getIntentFromLogin();
             mDb = AppDatabase.getsInstance(getApplicationContext());
             // Configure sign-in to request the user's basic profile like name and email
             mAuth = FirebaseAuth.getInstance();
@@ -199,7 +197,7 @@ public class GoogleLoginActivity extends LoginActivity implements
                 Log.e(TAG, "Login Unsuccessful. ");
                 Toast.makeText(this, "Login Unsuccessful", Toast.LENGTH_SHORT)
                         .show();
-                progressDialog.dismiss();
+                progressBar.setVisibility(View.GONE);
             }
         }
     }
@@ -270,6 +268,12 @@ public class GoogleLoginActivity extends LoginActivity implements
         mUserFirebaseDatabaseReference.addListenerForSingleValueEvent(valueEventListener);
     }
 
+    private void getIntentFromLogin() {
+        Intent i = getIntent();
+        countryCode = i.getStringExtra("countryCode");
+        clickedCountryCode = i.getStringExtra("clickedCountryCode");
+    }
+
     private void createFbUserObjectValues(String key) {
         fbUser = new FirebaseAtfNewsUser();
         fbUser.id = user.id;
@@ -293,7 +297,7 @@ public class GoogleLoginActivity extends LoginActivity implements
 
     //After a successful sign into Google, this method now authenticates the user with Firebase
     private void firebaseAuthWithGoogle(AuthCredential credential) {
-        progressDialog.show();
+        progressBar.setVisibility(View.VISIBLE);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -311,14 +315,18 @@ public class GoogleLoginActivity extends LoginActivity implements
                             Toast.makeText(GoogleLoginActivity.this, "welcome " + user.name, Toast.LENGTH_LONG).show();
 
                             Intent intent = new Intent(GoogleLoginActivity.this, TopNewsActivity.class);
+                            //getIntentFromWidget();
+                            intent.putExtra("countryCode", countryCode);
+                            intent.putExtra("clickedCountryCode", clickedCountryCode);
                             intent.putExtra(USER_OBJECT, user);
                             startActivity(intent);
                             finish();
                         }
-                        progressDialog.dismiss();
+                        progressBar.setVisibility(View.GONE);
                     }
                 });
     }
+
 
     @Override
     protected void onStart() {
@@ -339,12 +347,12 @@ public class GoogleLoginActivity extends LoginActivity implements
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
-        if (progressDialog != null) progressDialog.dismiss();
+        if (progressBar != null) progressBar.setVisibility(View.GONE);
     }
 
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        if(progressDialog != null)progressDialog.dismiss();
+        if(progressBar != null)progressBar.setVisibility(View.GONE);
     }
 }

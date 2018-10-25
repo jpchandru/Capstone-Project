@@ -38,6 +38,8 @@ import com.android.app.atfnews.utils.NetworkUtils;
 import com.android.app.atfnews.utils.PrefUtils;
 import com.android.app.atfnews.utils.Utils;
 import com.bumptech.glide.Glide;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -66,6 +68,8 @@ public class TopNewsActivity extends AppCompatActivity implements AtfNewsItmAdap
     RecyclerView mRecyclerView;
     @BindView(R.id.spinner)
     ProgressBar progressBar;
+    @BindView(R.id.adView)
+    AdView mAdView;
     LinearLayoutManager layoutManager;
     private FirebaseDatabase mUserFirebaseDatabase;
     private DatabaseReference mUserFirebaseDatabaseReference;
@@ -82,11 +86,11 @@ public class TopNewsActivity extends AppCompatActivity implements AtfNewsItmAdap
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         if (PrefUtils.getCurrentUser(TopNewsActivity.this) == null) {
             Intent iLogin = new Intent(this, LoginActivity.class);
             startActivity(iLogin);
         } else {
+            super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_main_news);
             ButterKnife.bind(this);
             setSupportActionBar(toolbar);
@@ -95,10 +99,8 @@ public class TopNewsActivity extends AppCompatActivity implements AtfNewsItmAdap
             mUserFirebaseDatabaseReference = mUserFirebaseDatabase.getReference("favatfnewsitem");
 
             Intent i = getIntent();
-            countryCode = i.getStringExtra("country_code");
-
-            Intent cli = getIntent();
-            clickedCountryCode = i.getStringExtra("clicked_country_code");
+            countryCode = i.getStringExtra("countryCode");
+            clickedCountryCode = i.getStringExtra("clickedCountryCode");
 
 
         /*if (savedInstanceState != null && savedInstanceState.containsKey(ATFNEWSITEMLISTKEY)) {
@@ -115,6 +117,10 @@ public class TopNewsActivity extends AppCompatActivity implements AtfNewsItmAdap
             mRecyclerView.setLayoutManager(layoutManager);
             clickedItemIndex = -1;
             progressBar.setVisibility(View.VISIBLE);
+            AdRequest adRequest = new AdRequest.Builder()
+                    .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                    .build();
+            mAdView.loadAd(adRequest);
 
             buildAndExecute(AtfNewsNavigator.trending.name());
         }
@@ -145,7 +151,7 @@ public class TopNewsActivity extends AppCompatActivity implements AtfNewsItmAdap
     private void setmTopNewsRecyclerView(List<AtfNewsItem> atfNewsItems, List<AtfNewsItem> mFavAtfNewsItemList) {
 
         mAtfNewsItemList = atfNewsItems;
-        mAtfNewsItemAdapter = new AtfNewsItmAdapter(this, atfNewsItems, mFavAtfNewsItemList, this);
+        mAtfNewsItemAdapter = new AtfNewsItmAdapter(this, atfNewsItems, mFavAtfNewsItemList, this, isTablet(TopNewsActivity.this));
         mRecyclerView.setAdapter(mAtfNewsItemAdapter);
         mAtfNewsItemAdapter.notifyDataSetChanged();
         progressBar.setVisibility(View.GONE);
@@ -190,11 +196,6 @@ public class TopNewsActivity extends AppCompatActivity implements AtfNewsItmAdap
             }
         });
         mUserFirebaseDatabaseReference.addListenerForSingleValueEvent(valueEventListener);
-    }
-
-    private void startFavNewsDpIntentActivity() {
-        Intent FavNewsintent = new Intent(this, FavNewsDpActivity.class);
-        startActivity(FavNewsintent);
     }
 
     @Override
@@ -370,6 +371,7 @@ public class TopNewsActivity extends AppCompatActivity implements AtfNewsItmAdap
             if (newsUrlType != null)
                 showTrendingNewsView(newsUrlType);
         } else if (name.equals(AtfNewsNavigator.favorite.name())) {
+            progressBar.setVisibility(View.VISIBLE);
             Fragment fragment = new AdMobFragment();
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction transaction = fragmentManager.beginTransaction();
@@ -404,7 +406,7 @@ public class TopNewsActivity extends AppCompatActivity implements AtfNewsItmAdap
     }
 
 
-    public class AsyncDBTaskForFavNewsDeletion extends AsyncTask<AtfNewsItem, Void, FavoriteAtfNewsItem> {
+    /*public class AsyncDBTaskForFavNewsDeletion extends AsyncTask<AtfNewsItem, Void, FavoriteAtfNewsItem> {
         @Override
         protected FavoriteAtfNewsItem doInBackground(final AtfNewsItem... atfNewsItems) {
             final AtfNewsItem atfNewsItm = atfNewsItems[0];
@@ -435,7 +437,7 @@ public class TopNewsActivity extends AppCompatActivity implements AtfNewsItmAdap
             }
 
         }
-    }
+    }*/
 
     private void removeFavWithUser(final int clickedIndex) {
         final String atfnewsItemUrl = mAtfNewsItemList.get(clickedIndex).getUrl();

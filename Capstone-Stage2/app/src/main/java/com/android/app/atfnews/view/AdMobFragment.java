@@ -96,7 +96,7 @@ public class AdMobFragment extends Fragment {
         Context context = getActivity();
         Intent i = new Intent(context, FavNewsDpActivity.class);
         context.startActivity(i);
-        progressBar.setVisibility(View.GONE);
+        //progressBar.setVisibility(View.GONE);
 
     }
 

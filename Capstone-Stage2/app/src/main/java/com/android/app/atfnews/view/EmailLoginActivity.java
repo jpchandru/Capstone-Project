@@ -1,13 +1,13 @@
 package com.android.app.atfnews.view;
 
 
-import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.widget.ImageView;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.android.app.atfnews.R;
@@ -38,13 +38,10 @@ public class EmailLoginActivity extends LoginActivity {
     FirebaseAtfNewsUser fbUser;
     User localUser;
     private ValueEventListener valueEventListener;
-    private ProgressDialog progressDialog;
-    private FirebaseAuth mAuth;
-    private String emailFromLocalDb = null;
-
+    //private ProgressDialog progressDialog;
     private AppDatabase mDb;
     @BindView(R.id.login_with_email)
-    ImageView emailImg;
+    Button emailImg;
     String emailLoginTxt;
     String key = null;
 
@@ -53,13 +50,14 @@ public class EmailLoginActivity extends LoginActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+        getIntentFromLogin();
         mDb = AppDatabase.getsInstance(getApplicationContext());
         // mAuth = FirebaseAuth.getInstance();
         mUserFirebaseDatabase = FirebaseDatabase.getInstance();
         mUserFirebaseDatabaseReference = mUserFirebaseDatabase.getReference("users");
-        progressDialog = new ProgressDialog(EmailLoginActivity.this);
+        /*progressDialog = new ProgressDialog(EmailLoginActivity.this);
         progressDialog.setMessage("Loading...");
-        progressDialog.show();
+        progressDialog.show();*/
         /*try {
             FirebaseAuth.getInstance().signInWithEmailAndPassword(emailLoginTxt.getText().toString(), "atfnewsuser");
         } catch (Exception e) {
@@ -101,24 +99,21 @@ public class EmailLoginActivity extends LoginActivity {
                 null,
                 null
         );
-
         PrefUtils.setCurrentUser(localUser, EmailLoginActivity.this);
-
-
         try {
             FirebaseAuth.getInstance().signInWithEmailAndPassword(emailLoginTxt, "atfnewsuser");
         } catch (Exception e) {
             Log.e(TAG, "Error occurred while signing in");
         }
-
         insertOrUpdateLocalDbAtfNewsUser();
         insertOrUpdateFirebaseAtfNewsUser();
-
+        progressBar.setVisibility(View.GONE);
         Toast.makeText(EmailLoginActivity.this, "welcome " + localUser.name, Toast.LENGTH_LONG).show();
         Intent i = new Intent(EmailLoginActivity.this, TopNewsActivity.class);
+        i.putExtra("countryCode", countryCode);
+        i.putExtra("clickedCountryCode", clickedCountryCode);
         startActivity(i);
         finish();
-        progressDialog.dismiss();
     }
 
 
@@ -176,7 +171,7 @@ public class EmailLoginActivity extends LoginActivity {
                     String key = mUserFirebaseDatabaseReference.push().getKey();
                     createFbUserObjectValues(key);
                 }
-                progressDialog.dismiss();
+                progressBar.setVisibility(View.GONE);
             }
 
             @Override
@@ -185,6 +180,12 @@ public class EmailLoginActivity extends LoginActivity {
             }
         });
         mUserFirebaseDatabaseReference.addListenerForSingleValueEvent(valueEventListener);
+    }
+
+    private void getIntentFromLogin() {
+        Intent i = getIntent();
+        countryCode = i.getStringExtra("countryCode");
+        clickedCountryCode = i.getStringExtra("clickedCountryCode");
     }
 
 
@@ -202,7 +203,7 @@ public class EmailLoginActivity extends LoginActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(progressDialog != null) progressDialog.dismiss();
+        if (progressBar != null) progressBar.setVisibility(View.GONE);
         if (mUserFirebaseDatabaseReference != null && valueEventListener != null) {
             String key = mUserFirebaseDatabaseReference.getKey();
             mUserFirebaseDatabaseReference.child(key).removeEventListener(valueEventListener);

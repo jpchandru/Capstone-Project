@@ -8,6 +8,8 @@ import android.widget.RemoteViewsService;
 
 import com.android.app.atfnews.R;
 import com.android.app.atfnews.model.AtfNewsCountries;
+import com.android.app.atfnews.utils.PrefUtils;
+import com.android.app.atfnews.view.LoginActivity;
 
 import java.util.ArrayList;
 
