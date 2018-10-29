@@ -6,8 +6,8 @@
     android:background="@color/cardview_shadow_start_color"
     android:contentDescription="@string/appwidget_atfworldnews"
     android:gravity="center_vertical"
-    android:paddingLeft="4dp"
-    android:paddingRight="4dp"
+    android:paddingLeft="@dimen/btn_elevation"
+    android:paddingRight="@dimen/btn_elevation"
     android:text="@string/appwidget_atfnews"
     android:textColor="@color/color_logo"
     android:textStyle="italic" />

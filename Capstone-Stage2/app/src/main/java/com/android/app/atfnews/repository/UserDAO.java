@@ -28,7 +28,4 @@ public interface UserDAO {
     @Query("UPDATE atfnewsuser SET id=:id, name=:name, email=:email, facebookID=:faceBookID, googleId=:googleId, photoUrl=:photoUrl  WHERE email = :email")
     void updateUser(String id, String name, String email, String faceBookID, String googleId, String photoUrl);
 
-    @Delete
-    void deleteUser(User user);
-
 }

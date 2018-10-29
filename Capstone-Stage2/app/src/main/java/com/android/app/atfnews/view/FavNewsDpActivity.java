@@ -2,10 +2,7 @@ package com.android.app.atfnews.view;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -28,6 +25,8 @@ import com.android.app.atfnews.utils.AppExecutors;
 import com.android.app.atfnews.utils.PrefUtils;
 import com.android.app.atfnews.utils.Utils;
 import com.bumptech.glide.Glide;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -53,19 +52,19 @@ public class FavNewsDpActivity extends AppCompatActivity implements AtfNewsItmAd
     ProgressBar progressBar;
     LinearLayoutManager layoutManager;
     private FirebaseFavAtfNewsItem firebaseFavAtfNewsItem;
-    SharedPreferences sharedPreferences;
     private FirebaseDatabase mUserFirebaseDatabase;
     private DatabaseReference mUserFirebaseDatabaseReference;
     private ValueEventListener valueEventListener;
     List<FirebaseFavAtfNewsItem> favAtfNewsItemListFb;
     List<AtfNewsItem> atfNewsItemList = null;
     AtfNewsItem atfNewsItemFbCopy = null;
-
-    //private ProgressDialog progressDialog;
+    @BindView(R.id.adView)
+    AdView mAdView;
+    private static final String FIREBASE_TABLE_FAVNEWS = "favatfnewsitem";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        if(getUserEmailId() == null){
+        if (getUserEmailId() == null) {
             Intent li = new Intent(FavNewsDpActivity.this, LoginActivity.class);
             startActivity(li);
         }
@@ -76,15 +75,17 @@ public class FavNewsDpActivity extends AppCompatActivity implements AtfNewsItmAd
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mUserFirebaseDatabase = FirebaseDatabase.getInstance();
-        mUserFirebaseDatabaseReference = mUserFirebaseDatabase.getReference("favatfnewsitem");
+        mUserFirebaseDatabaseReference = mUserFirebaseDatabase.getReference(FIREBASE_TABLE_FAVNEWS);
         mDb = AppDatabase.getsInstance(getApplicationContext());
         layoutManager = new LinearLayoutManager(this,
                 LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+        mAdView.loadAd(adRequest);
         showFavoriteNewsView(getUserEmailId());
         progressBar.setVisibility(View.VISIBLE);
-
-
     }
 
     @Override
@@ -93,7 +94,7 @@ public class FavNewsDpActivity extends AppCompatActivity implements AtfNewsItmAd
     }
 
     private String getUserEmailId() {
-        if(PrefUtils.getCurrentUser(FavNewsDpActivity.this) != null){
+        if (PrefUtils.getCurrentUser(FavNewsDpActivity.this) != null) {
             return PrefUtils.getCurrentUser(FavNewsDpActivity.this).email;
         }
         return null;
@@ -102,7 +103,7 @@ public class FavNewsDpActivity extends AppCompatActivity implements AtfNewsItmAd
 
     private void setmFavNewsRecyclerView(List<AtfNewsItem> atfNewsItems, Boolean isFavItem) {
 
-        mFavAtfNewsItemAdapter = new AtfNewsItmAdapter(FavNewsDpActivity.this, atfNewsItems, isFavItem, this, TopNewsActivity.isTablet(FavNewsDpActivity.this));
+        mFavAtfNewsItemAdapter = new AtfNewsItmAdapter(FavNewsDpActivity.this, atfNewsItems, isFavItem, this);
         mRecyclerView.setAdapter(mFavAtfNewsItemAdapter);
         mFavAtfNewsItemAdapter.notifyDataSetChanged();
     }
@@ -111,6 +112,7 @@ public class FavNewsDpActivity extends AppCompatActivity implements AtfNewsItmAd
         Log.d("Display ", " FAVORITE UI");
         setupFavViewModel(userId);
         Toast.makeText(this, "Displaying your favorite news", Toast.LENGTH_LONG).show();
+        if(!validNetworkStatus()) Toast.makeText(this, "Some of your previously saved news (if any) might not be in sync during offline.", Toast.LENGTH_LONG).show();
     }
 
     private void setupFavViewModel(String emailId) {
@@ -118,19 +120,22 @@ public class FavNewsDpActivity extends AppCompatActivity implements AtfNewsItmAd
         FavoriteNewsViewModel viewModel = ViewModelProviders.of(this).get(FavoriteNewsViewModel.class);
         viewModel.getFavoriteAtfNewsItemDAO().getAllFavouriteNewsItemForUser(emailId).observe(this, new Observer<List<AtfNewsItem>>() {
             Boolean dataRead = false;
+
             @Override
             public void onChanged(@Nullable List<AtfNewsItem> atfNewsItemListLocal) {
                 if (!dataRead) {
                     Log.d(TAG, "Retrieving LiveData using Rooms in FavoriteNewsViewModel");
                     if (atfNewsItemListLocal != null && atfNewsItemListLocal.size() > 0) {
-                        setmFavNewsRecyclerView(atfNewsItemListLocal, true);
+                        if (validNetworkStatus())
+                            chkAndRetrieveFavAtfNewsItemFromFb(true, atfNewsItemListLocal);
+                        else
+                            setmFavNewsRecyclerView(atfNewsItemListLocal, true);
                         progressBar.setVisibility(View.GONE);
-                        //Toast.makeText(FavNewsDpActivity.this, "Enjoy your favourite news", Toast.LENGTH_SHORT).show();
                     } else {
                         Log.d(TAG, "Retrieving Firebase data for users favorite news during device change ..");
-                        // check if it exists in fb
+                        // check if it exists in fb to load fav data while reinistalling atfnews incase of device change or not.
                         if (validNetworkStatus())
-                            chkAndRetrieveFavAtfNewsItemFromFb();
+                            chkAndRetrieveFavAtfNewsItemFromFb(true, null);
                         else
                             Toast.makeText(FavNewsDpActivity.this, "We could retrieve your previously saved favourite news (if any) but you seem to be offline.", Toast.LENGTH_SHORT).show();
 
@@ -148,56 +153,67 @@ public class FavNewsDpActivity extends AppCompatActivity implements AtfNewsItmAd
     }
 
 
-    private void chkAndRetrieveFavAtfNewsItemFromFb() {
+    private void chkAndRetrieveFavAtfNewsItemFromFb(boolean isReady, @Nullable final List<AtfNewsItem> atfNewsItemListLocal) {
         favAtfNewsItemListFb = new ArrayList<FirebaseFavAtfNewsItem>();
         atfNewsItemList = new ArrayList<AtfNewsItem>();
-        valueEventListener = (new ValueEventListener() {
-            Boolean dataRead = false;
+        if (isReady)
+            valueEventListener = (new ValueEventListener() {
+                Boolean dataRead = false;
 
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (!dataRead) {
-                    for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                        String key = dataSnapshot1.getKey();
-                        firebaseFavAtfNewsItem = dataSnapshot1.getValue(FirebaseFavAtfNewsItem.class);
-                        if (firebaseFavAtfNewsItem != null && firebaseFavAtfNewsItem.getEmailId().equalsIgnoreCase(getUserEmailId())) {
-                            favAtfNewsItemListFb.add(firebaseFavAtfNewsItem);
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (!dataRead) {
+                        for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                            String key = dataSnapshot1.getKey();
+                            firebaseFavAtfNewsItem = dataSnapshot1.getValue(FirebaseFavAtfNewsItem.class);
+                            if (firebaseFavAtfNewsItem != null && firebaseFavAtfNewsItem.getEmailId().equalsIgnoreCase(getUserEmailId())) {
+                                if (!favAtfNewsItemListFb.contains(firebaseFavAtfNewsItem))
+                                    favAtfNewsItemListFb.add(firebaseFavAtfNewsItem);
+                            }
+                            dataRead = true;
                         }
-                        dataRead = true;
+
+                        for (FirebaseFavAtfNewsItem favAtfNewsItemFbCopy : favAtfNewsItemListFb) {
+                            atfNewsItemFbCopy = new AtfNewsItem();
+                            atfNewsItemFbCopy.setAuthor(favAtfNewsItemFbCopy.getAuthor());
+                            atfNewsItemFbCopy.setCategory(favAtfNewsItemFbCopy.getCategory());
+                            atfNewsItemFbCopy.setContent(favAtfNewsItemFbCopy.getContent());
+                            atfNewsItemFbCopy.setCountry(favAtfNewsItemFbCopy.getCountry());
+                            atfNewsItemFbCopy.setDescription(favAtfNewsItemFbCopy.getDescription());
+                            atfNewsItemFbCopy.setEmailId(favAtfNewsItemFbCopy.getEmailId());
+                            atfNewsItemFbCopy.setImgUrl(favAtfNewsItemFbCopy.getImgUrl());
+                            atfNewsItemFbCopy.setNewsType(favAtfNewsItemFbCopy.getNewsType());
+                            atfNewsItemFbCopy.setPublishDate(favAtfNewsItemFbCopy.getPublishDate());
+                            atfNewsItemFbCopy.setTitle(favAtfNewsItemFbCopy.getTitle());
+                            atfNewsItemFbCopy.setUrl(favAtfNewsItemFbCopy.getUrl());
+                            atfNewsItemList.add(atfNewsItemFbCopy);
+                        }
                     }
 
-                    for (FirebaseFavAtfNewsItem favAtfNewsItemFbCopy : favAtfNewsItemListFb) {
-                        atfNewsItemFbCopy = new AtfNewsItem();
-                        atfNewsItemFbCopy.setAuthor(favAtfNewsItemFbCopy.getAuthor());
-                        atfNewsItemFbCopy.setCategory(favAtfNewsItemFbCopy.getCategory());
-                        atfNewsItemFbCopy.setContent(favAtfNewsItemFbCopy.getContent());
-                        atfNewsItemFbCopy.setCountry(favAtfNewsItemFbCopy.getCountry());
-                        atfNewsItemFbCopy.setDescription(favAtfNewsItemFbCopy.getDescription());
-                        atfNewsItemFbCopy.setEmailId(favAtfNewsItemFbCopy.getEmailId());
-                        atfNewsItemFbCopy.setImgUrl(favAtfNewsItemFbCopy.getImgUrl());
-                        atfNewsItemFbCopy.setNewsType(favAtfNewsItemFbCopy.getNewsType());
-                        atfNewsItemFbCopy.setPublishDate(favAtfNewsItemFbCopy.getPublishDate());
-                        atfNewsItemFbCopy.setTitle(favAtfNewsItemFbCopy.getTitle());
-                        atfNewsItemFbCopy.setUrl(favAtfNewsItemFbCopy.getUrl());
-                        atfNewsItemList.add(atfNewsItemFbCopy);
-                    }
+                    /*if (atfNewsItemListLocal != null){
+                        for (AtfNewsItem atfNewsItem : atfNewsItemListLocal) {
+                            if (atfNewsItemList.contains(atfNewsItem)) {
+                                continue;
+                            } else {
+                                atfNewsItemFbCopy = new AtfNewsItem();
+                                atfNewsItemFbCopy = atfNewsItem;
+                                atfNewsItemList.add(atfNewsItemFbCopy);
+                            }
+                        }
+                    }*/
+
+                    setmFavNewsRecyclerView(atfNewsItemList, true);
+                    //Toast.makeText(FavNewsDpActivity.this, "We saved your previously added favourite news. Enjoy!", Toast.LENGTH_SHORT).show();
+                    progressBar.setVisibility(View.GONE);
                 }
 
-                setmFavNewsRecyclerView(atfNewsItemList, true);
-                //Toast.makeText(FavNewsActivity.this, "We saved your previously added favourite news. Enjoy!", Toast.LENGTH_SHORT).show();
-                progressBar.setVisibility(View.GONE);
-            }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-        mUserFirebaseDatabaseReference.addValueEventListener(valueEventListener);
-    }
-
-    private String getNewCountryCode() {
-        return PrefUtils.getUrlNewsType(this);
+                }
+            });
+        if (isReady)
+            mUserFirebaseDatabaseReference.addValueEventListener(valueEventListener);
     }
 
     @Override
@@ -217,12 +233,10 @@ public class FavNewsDpActivity extends AppCompatActivity implements AtfNewsItmAd
             @Override
             public void run() {
                 mDb.favoriteAtfNewsItemDAO().deleteFavAtfNewsItem(new FavoriteAtfNewsItem(getUserEmailId(), atfnewsItemUrl));// emailid and url
-                //if(iFavRemove == null){
                 removeFromFb(atfnewsItemUrl);
                 String key = mUserFirebaseDatabaseReference.getKey();
                 mUserFirebaseDatabaseReference.child(key).orderByChild("email");
-                // }
-                // url
+                if (!validNetworkStatus()) setupFavViewModel(getUserEmailId());
                 progressBar.setVisibility(View.GONE);
             }
         });
@@ -254,7 +268,6 @@ public class FavNewsDpActivity extends AppCompatActivity implements AtfNewsItmAd
                 }
 
                 if (isFavItemDeleted) {
-                    //chkAndRetrieveFavAtfNewsItemFromFb();
                     setupFavViewModel(getUserEmailId());
                     String key = mUserFirebaseDatabaseReference.getKey();
                     mUserFirebaseDatabaseReference.child(key).orderByChild("email");
@@ -263,7 +276,6 @@ public class FavNewsDpActivity extends AppCompatActivity implements AtfNewsItmAd
                 } else {
                     Log.i(TAG, "Record for FavItemNews for this user doesnt exist in Firebase for deletion");
                 }
-                // }
             }
 
             @Override
@@ -272,8 +284,6 @@ public class FavNewsDpActivity extends AppCompatActivity implements AtfNewsItmAd
             }
         });
         mUserFirebaseDatabaseReference.addListenerForSingleValueEvent(valueEventListener);
-
-
     }
 
     @Override
@@ -285,11 +295,5 @@ public class FavNewsDpActivity extends AppCompatActivity implements AtfNewsItmAd
             mUserFirebaseDatabaseReference.child(key).removeEventListener(valueEventListener);
         }
         Glide.get(this).clearMemory();
-    }
-
-    public static boolean isTablet(Context context) {
-        return (context.getResources().getConfiguration().screenLayout
-                & Configuration.SCREENLAYOUT_SIZE_MASK)
-                >= Configuration.SCREENLAYOUT_SIZE_LARGE;
     }
 }

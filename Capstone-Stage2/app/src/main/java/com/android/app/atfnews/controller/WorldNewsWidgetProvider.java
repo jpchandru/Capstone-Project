@@ -20,6 +20,7 @@ import com.android.app.atfnews.view.LoginActivity;
 public class WorldNewsWidgetProvider extends AppWidgetProvider {
 
     public static final String TAG = WorldNewsWidgetProvider.class.getSimpleName();
+    private static final String COUNTRYCODE = "country_code";
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
@@ -27,10 +28,10 @@ public class WorldNewsWidgetProvider extends AppWidgetProvider {
         PrefUtils.setUrlNewsType(AtfNewsUrlType.us.name(), context);
         Intent countriesIntent = new Intent(context, AtfNewsWidgetService.class);
         countriesIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+
         // Create an intent to launch TopNewsActivity when clicked
         Intent intent = new Intent(context, LoginActivity.class);
-        intent.putExtra("country_code", PrefUtils.getUrlNewsType(context));
-
+        intent.putExtra(COUNTRYCODE, PrefUtils.getUrlNewsType(context));
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.atfnews_widget_provider);

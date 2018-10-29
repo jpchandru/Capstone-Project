@@ -19,11 +19,9 @@ public class FavoriteNewsViewModel extends AndroidViewModel {
         super(application);
         AppDatabase database = AppDatabase.getsInstance(this.getApplication());
         Log.d(TAG, "Actively retrieving favorite atfnews for specified user from the Database");
-        //atfNewsItemList = database.favoriteAtfNewsItemDAO().getFavouriteNewsItemForUsers();
         favoriteAtfNewsItemDAO = database.favoriteAtfNewsItemDAO();
     }
 
-    // public LiveData<List<AtfNewsItem>> getFavouriteAtfNewsItemList(){   return atfNewsItemList; }
     public FavoriteAtfNewsItemDAO getFavoriteAtfNewsItemDAO() {
         return favoriteAtfNewsItemDAO;
     }

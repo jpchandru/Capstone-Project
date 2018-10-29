@@ -21,7 +21,7 @@ import static java.lang.Integer.parseInt;
 public class JsonUtils {
 
     private static final String ARTICLES = "articles";
-    public static JSONObject newsSourceResult; //TODO sourceNAME
+    public static JSONObject newsSourceResult;
 
     public static List<AtfNewsItem> parseNewsApiJson(String json, String newsType, String country, String category, String emailId) throws JSONException {
         JSONObject newsApiDetails = new JSONObject(json);

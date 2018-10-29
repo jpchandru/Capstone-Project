@@ -9,9 +9,6 @@ import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
 
-/**
- * Created by Android on 22-04-2015.
- */
 
 @Entity(tableName = "atfnewsuser", indices = {@Index(value = {"facebookID"},
         unique = true)})

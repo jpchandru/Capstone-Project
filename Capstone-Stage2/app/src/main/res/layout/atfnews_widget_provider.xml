@@ -20,8 +20,8 @@
     <ListView
         android:id="@+id/widget_listview"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="10"
+        android:layout_height="@dimen/bg_layout_height"
+        android:layout_weight="@dimen/widget_listview_weight"
         android:background="@color/cardview_shadow_end_color"
         android:fontFamily="sans-serif-light"
         android:textColor="@color/color_logo" />

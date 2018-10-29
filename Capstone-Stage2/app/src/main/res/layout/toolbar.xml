@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="?android:attr/actionBarSize"
     android:background="@color/browser_actions_text_color"
-    android:elevation="4dp"
+    android:elevation="@dimen/btn_elevation"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     app:titleTextColor="@color/color_logo"
     android:theme="@android:style/ThemeOverlay.Material.Dark.ActionBar"

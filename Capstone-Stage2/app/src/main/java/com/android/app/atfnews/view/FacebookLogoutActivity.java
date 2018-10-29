@@ -1,7 +1,5 @@
 package com.android.app.atfnews.view;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,15 +7,15 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.app.atfnews.R;
 import com.android.app.atfnews.model.AtfNewsUrlType;
 import com.android.app.atfnews.utils.PrefUtils;
-import com.android.app.atfnews.R;
-import com.android.app.atfnews.model.User;
 import com.facebook.login.LoginManager;
 
 import java.io.IOException;
@@ -31,9 +29,7 @@ import butterknife.ButterKnife;
 public class FacebookLogoutActivity extends AppCompatActivity {
 
     private static final String TAG = "FacebookLogoutActivity";
-    private User user;
     private ImageView profileImage;
-    private ProgressDialog progressDialog;
     Bitmap bitmap;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -46,18 +42,14 @@ public class FacebookLogoutActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_logout_facebook);
-        user= PrefUtils.getCurrentUser(FacebookLogoutActivity.this);
         ButterKnife.bind(this);
         this.setSupportActionBar(toolbar);
-        if(null != this.getSupportActionBar()){
+        if (null != this.getSupportActionBar()) {
             this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-        profileImage= (ImageView) findViewById(R.id.profileImage);
-        progressDialog = new ProgressDialog(FacebookLogoutActivity.this);
-        progressDialog.setMessage("Loading...");
-        progressDialog.show();
+        profileImage = (ImageView) findViewById(R.id.profileImage);
         // fetching facebook's profile picture
-        new AsyncTask<Void,Void,Void>(){
+        new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
                 URL imageURL = null;
@@ -67,7 +59,7 @@ public class FacebookLogoutActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 try {
-                 bitmap  = BitmapFactory.decodeStream(imageURL.openConnection().getInputStream());
+                    bitmap = BitmapFactory.decodeStream(imageURL.openConnection().getInputStream());
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -86,7 +78,9 @@ public class FacebookLogoutActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 PrefUtils.setUrlNewsType(AtfNewsUrlType.us.name(), FacebookLogoutActivity.this);
-                Intent i= new Intent(FacebookLogoutActivity.this,TopNewsActivity.class);
+                Log.d(TAG, "Successfully reset to default news");
+                Toast.makeText(FacebookLogoutActivity.this, "You are watching news of USA", Toast.LENGTH_SHORT).show();
+                Intent i = new Intent(FacebookLogoutActivity.this, TopNewsActivity.class);
                 startActivity(i);
                 finish();
             }
@@ -101,11 +95,12 @@ public class FacebookLogoutActivity extends AppCompatActivity {
                 PrefUtils.clearUrlNewsType(FacebookLogoutActivity.this);
                 // We can logout from facebook by calling following method
                 LoginManager.getInstance().logOut();
-                Intent i= new Intent(FacebookLogoutActivity.this,LoginActivity.class);
+                Toast.makeText(FacebookLogoutActivity.this, "Thank You for using ATF News. See you soon.", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "Successfully signedoff from Firebase");
+                Intent i = new Intent(FacebookLogoutActivity.this, LoginActivity.class);
                 startActivity(i);
                 finish();
             }
         });
-        progressDialog.dismiss();
     }
 }

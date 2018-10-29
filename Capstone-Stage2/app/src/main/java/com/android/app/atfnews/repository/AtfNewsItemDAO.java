@@ -24,14 +24,8 @@ public interface AtfNewsItemDAO {
     @Query("SELECT * FROM atfnewsitem where country = :countryCode ORDER BY publishDate DESC")
     LiveData<List<AtfNewsItem>> loadAllAtfNewsItem(final String countryCode);
 
-    /*@Query("SELECT * FROM atfnewsitem where id = :id")
-    LiveData<AtfNewsItem> findAtfNewsItemById(int id);*/
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     @JvmSuppressWildcards
     void insertAtfNewsItem(List<AtfNewsItem> atfNewsItemList);
-
-    @Delete
-    void deleteAtfNewsItem(AtfNewsItem atfNewsItem);
 
 }

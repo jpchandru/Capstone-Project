@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.android.app.atfnews.R;
+import com.android.app.atfnews.utils.Utils;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -41,47 +42,39 @@ public class AdMobFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_main_news, container, false);
         ButterKnife.bind(this, view);
-        interstitialAd = new PublisherInterstitialAd(Objects.requireNonNull(getContext()));
-        interstitialAd.setAdUnitId(getString(R.string.interstitial_ad_unit_id));
-        interstitialAd.setAdListener(new AdListener() {
-            @Override
-            public void onAdClosed() {
-                super.onAdClosed();
-                progressBar.setVisibility(View.VISIBLE);
-                performFavNewsDpActivity();
-                //fetch the next ad in prior
-                //requestNewInterstitial();
-            }
+        if (!Utils.isNetworkAvailable(getContext())) performFavNewsDpActivity();
+        else {
+            interstitialAd = new PublisherInterstitialAd(Objects.requireNonNull(getContext()));
+            interstitialAd.setAdUnitId(getString(R.string.interstitial_ad_unit_id));
+            interstitialAd.setAdListener(new AdListener() {
+                @Override
+                public void onAdClosed() {
+                    super.onAdClosed();
+                    progressBar.setVisibility(View.VISIBLE);
+                    performFavNewsDpActivity();
+                    //fetch the next ad in prior
+                    //requestNewInterstitial();
+                }
 
-            @Override
-            public void onAdFailedToLoad(int errorCode) {
-                super.onAdFailedToLoad(errorCode);
-                Log.i(TAG, "Failing");
-                //prefetch the next ad
-                requestNewInterstitial();
-            }
+                @Override
+                public void onAdFailedToLoad(int errorCode) {
+                    super.onAdFailedToLoad(errorCode);
+                    Log.i(TAG, "Failing");
+                    //prefetch the next ad
+                    requestNewInterstitial();
+                }
 
-            @Override
-            public void onAdLoaded() {
-                Log.i(TAG, "Loading");
-                interstitialAd.show();
-                super.onAdLoaded();
-            }
-        });
-
-        requestNewInterstitial();
-        /*if (interstitialAd.isLoaded()) {
-            interstitialAd.show();
-        } else {
-            progressBar.setVisibility(View.VISIBLE);
-            performFavNewsDpActivity();
-        }*/
-
-        progressBar.setVisibility(View.GONE);
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                .build();
-        mAdView.loadAd(adRequest);
+                @Override
+                public void onAdLoaded() {
+                    Log.i(TAG, "Loading");
+                    interstitialAd.show();
+                    super.onAdLoaded();
+                }
+            });
+            requestNewInterstitial();
+            progressBar.setVisibility(View.GONE);
+            return view;
+        }
         return view;
     }
 
@@ -96,8 +89,6 @@ public class AdMobFragment extends Fragment {
         Context context = getActivity();
         Intent i = new Intent(context, FavNewsDpActivity.class);
         context.startActivity(i);
-        //progressBar.setVisibility(View.GONE);
-
     }
 
 

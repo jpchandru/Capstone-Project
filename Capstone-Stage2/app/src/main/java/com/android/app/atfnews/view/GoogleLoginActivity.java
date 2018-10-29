@@ -1,8 +1,6 @@
 package com.android.app.atfnews.view;
 
 
-import android.app.ProgressDialog;
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
@@ -40,8 +38,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import javax.annotation.Nullable;
-
 public class GoogleLoginActivity extends LoginActivity implements
         GoogleApiClient.OnConnectionFailedListener,
         View.OnClickListener {
@@ -58,37 +54,23 @@ public class GoogleLoginActivity extends LoginActivity implements
     private final Context mContext = this;
     private static final String USER_OBJECT = "USER_OBJECT";
     private static final int RC_SIGN_IN = 9001;
-   // private ProgressDialog progressDialog;
     private ValueEventListener valueEventListener;
+    private static final String COUNTRYCODE = "countryCode";
+    private static final String CLICKEDCOUNTRYCODE = "clickedCountryCode";
+    private static final String FIREBASE_TABLE_USER = "users";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        /*if (savedInstanceState != null && savedInstanceState.containsKey(USER_OBJECT)) {
-            user =  savedInstanceState.getParcelable(USER_OBJECT);
-            Log.d(TAG, "Retrieved data from SaveInstanceStance");
-            Intent intent = new Intent(GoogleLoginActivity.this, FacebookLogoutActivity.class);
-            // Using Parcelable
-            intent.putExtra(USER_OBJECT, user);
-            try {
-                GoogleLoginActivity.this.mContext.startActivity(intent);
-                finish();
-            } catch (RuntimeException e) {
-                Log.d(TAG, e.getMessage());
-            }*/
         if (PrefUtils.getCurrentUser(GoogleLoginActivity.this) != null) {
             Intent homeIntent = new Intent(GoogleLoginActivity.this, GoogleLogoutActivity.class);
             startActivity(homeIntent);
             finish();
         } else {
-            /*progressDialog = new ProgressDialog(GoogleLoginActivity.this);
-            progressDialog.setMessage("Loading...");
-            progressDialog.show();*/
             getIntentFromLogin();
             mDb = AppDatabase.getsInstance(getApplicationContext());
             // Configure sign-in to request the user's basic profile like name and email
             mAuth = FirebaseAuth.getInstance();
-            //this is where we start the Auth state Listener to listen for whether the user is signed in or not
             mAuthListener = new FirebaseAuth.AuthStateListener() {
                 @Override
                 public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -97,12 +79,6 @@ public class GoogleLoginActivity extends LoginActivity implements
                     //if user is signed in, we call a helper method to save the user details to Firebase
                     if (user != null) {
                         // User is signed in
-
-                    /*Intent intent = getIntent();
-                    if (intent != null && intent.hasExtra("user")) {
-                        user = intent.getParcelableExtra("user");
-                    }*/
-                        //createUserInFirebaseHelper();
                         Log.e(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
                     } else {
                         // User is signed out
@@ -112,7 +88,7 @@ public class GoogleLoginActivity extends LoginActivity implements
             };
 
             mUserFirebaseDatabase = FirebaseDatabase.getInstance();
-            mUserFirebaseDatabaseReference = mUserFirebaseDatabase.getReference("users");
+            mUserFirebaseDatabaseReference = mUserFirebaseDatabase.getReference(FIREBASE_TABLE_USER);
             configureSignin();
             signIn();
         }
@@ -155,13 +131,6 @@ public class GoogleLoginActivity extends LoginActivity implements
         }
     }
 
-    /*@Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelable("userObject", user);
-        Log.v(TAG, "Saving the user");
-    }*/
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -183,13 +152,6 @@ public class GoogleLoginActivity extends LoginActivity implements
                 PrefUtils.setCurrentUser(user, GoogleLoginActivity.this);
                 insertOrUpdateLocalDbAtfNewsUser();
                 insertOrUpdateFirebaseAtfNewsUser();
-                /*AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        mDb.userDAO().insertUser(user);
-                    }
-                });*/
                 AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
                 firebaseAuthWithGoogle(credential);
             } else {
@@ -205,38 +167,15 @@ public class GoogleLoginActivity extends LoginActivity implements
     private void insertOrUpdateLocalDbAtfNewsUser() {
         UserViewModel viewModel = ViewModelProviders.of(this).get(UserViewModel.class);
         final User userFromDb = viewModel.getUserDAO().findUserWithEmail(user.email);
-            AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                @Override
-                public void run() {
-                    if(userFromDb != null)
-                        mDb.userDAO().updateUser(user.id, user.name, user.email, user.facebookID, user.googleId, user.photoUrl);
-                    else
-                        mDb.userDAO().insertUser(user);
-                }
-            });
-
-
-        /*viewModel.getUserDAO().findUserWithEmail(user.email).observe(this, new Observer<User>() {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
-            public void onChanged(@Nullable User liveUser) {
-                Log.d(TAG, "Retrieving LiveData using Rooms in UserViewModel");
-                if (liveUser != null)
-                    emailFromLocalDb = liveUser.getEmail();
-
-                AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (emailFromLocalDb != null)
-                            mDb.userDAO().updateUser(user.id, user.name, user.email, user.facebookID, user.googleId, user.photoUrl);
-                        else
-                            mDb.userDAO().insertUser(user);
-                    }
-
-
-                });
-
+            public void run() {
+                if (userFromDb != null)
+                    mDb.userDAO().updateUser(user.id, user.name, user.email, user.facebookID, user.googleId, user.photoUrl);
+                else
+                    mDb.userDAO().insertUser(user);
             }
-        });*/
+        });
     }
 
 
@@ -248,7 +187,6 @@ public class GoogleLoginActivity extends LoginActivity implements
                     String key = dataSnapshot1.getKey();
                     fbUser = dataSnapshot1.getValue(FirebaseAtfNewsUser.class); // This is a member variable
                     if (fbUser != null && fbUser.email.equalsIgnoreCase(user.email)) {
-                        //mUserFirebaseDatabaseReference.orderByChild("email").equalTo(fbUser.getEmail()).addValueEventListener(listener);
                         createFbUserObjectValues(key);
                     } else {
                         fbUser = null;
@@ -270,8 +208,8 @@ public class GoogleLoginActivity extends LoginActivity implements
 
     private void getIntentFromLogin() {
         Intent i = getIntent();
-        countryCode = i.getStringExtra("countryCode");
-        clickedCountryCode = i.getStringExtra("clickedCountryCode");
+        countryCode = i.getStringExtra(COUNTRYCODE);
+        clickedCountryCode = i.getStringExtra(CLICKEDCOUNTRYCODE);
     }
 
     private void createFbUserObjectValues(String key) {
@@ -290,7 +228,8 @@ public class GoogleLoginActivity extends LoginActivity implements
     protected void onDestroy() {
         super.onDestroy();
         String key = mUserFirebaseDatabaseReference.getKey();
-        if(valueEventListener != null) mUserFirebaseDatabaseReference.child(key).removeEventListener(valueEventListener);
+        if (valueEventListener != null)
+            mUserFirebaseDatabaseReference.child(key).removeEventListener(valueEventListener);
         Glide.get(this).clearMemory();
     }
 
@@ -316,8 +255,8 @@ public class GoogleLoginActivity extends LoginActivity implements
 
                             Intent intent = new Intent(GoogleLoginActivity.this, TopNewsActivity.class);
                             //getIntentFromWidget();
-                            intent.putExtra("countryCode", countryCode);
-                            intent.putExtra("clickedCountryCode", clickedCountryCode);
+                            intent.putExtra(COUNTRYCODE, countryCode);
+                            intent.putExtra(CLICKEDCOUNTRYCODE, clickedCountryCode);
                             intent.putExtra(USER_OBJECT, user);
                             startActivity(intent);
                             finish();
@@ -331,8 +270,6 @@ public class GoogleLoginActivity extends LoginActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-
-        //FirebaseUser currentUser = mAuth.getCurrentUser();
         Log.e(TAG, "current user retrieved ................");
         if (mAuthListener != null) {
             FirebaseAuth.getInstance().signOut();
@@ -353,6 +290,6 @@ public class GoogleLoginActivity extends LoginActivity implements
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        if(progressBar != null)progressBar.setVisibility(View.GONE);
+        if (progressBar != null) progressBar.setVisibility(View.GONE);
     }
 }

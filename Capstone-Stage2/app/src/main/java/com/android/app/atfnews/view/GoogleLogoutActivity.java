@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.android.app.atfnews.R;
 import com.android.app.atfnews.model.AtfNewsUrlType;
@@ -92,6 +93,7 @@ public class GoogleLogoutActivity extends AppCompatActivity implements
             @Override
             public void onClick(View v) {
                 PrefUtils.setUrlNewsType(AtfNewsUrlType.us.name(), GoogleLogoutActivity.this);
+                Toast.makeText(GoogleLogoutActivity.this, "You are watching news of USA", Toast.LENGTH_SHORT).show();
                 Intent i = new Intent(GoogleLogoutActivity.this, TopNewsActivity.class);
                 startActivity(i);
                 finish();
@@ -124,6 +126,7 @@ public class GoogleLogoutActivity extends AppCompatActivity implements
                                 public void onResult(@NonNull Status status) {
                                     if (status.isSuccess()) {
                                         Log.d(TAG, "User Logged out");
+                                        Toast.makeText(GoogleLogoutActivity.this, "Thank You for using ATF News. See you soon.", Toast.LENGTH_SHORT).show();
                                         Intent intent = new Intent(GoogleLogoutActivity.this, LoginActivity.class);
                                         startActivity(intent);
                                         finish();

@@ -21,14 +21,14 @@
         android:id="@+id/spinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true" />
+        android:layout_centerInParent="@string/text_focus" />
 
     <com.google.android.gms.ads.AdView
         android:id="@+id/adView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="@string/text_focus"
+        android:layout_centerHorizontal="@string/text_focus"
         ads:adSize="@string/banner_ad_size"
         ads:adUnitId="@string/banner_ad_unit_id" />
 

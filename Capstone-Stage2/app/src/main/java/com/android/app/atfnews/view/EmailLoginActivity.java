@@ -38,12 +38,14 @@ public class EmailLoginActivity extends LoginActivity {
     FirebaseAtfNewsUser fbUser;
     User localUser;
     private ValueEventListener valueEventListener;
-    //private ProgressDialog progressDialog;
     private AppDatabase mDb;
     @BindView(R.id.login_with_email)
     Button emailImg;
     String emailLoginTxt;
-    String key = null;
+    private static final String EMAILLOGINTEXT = "emailLoginText";
+    private static final String COUNTRYCODE = "countryCode";
+    private static final String CLICKEDCOUNTRYCODE = "clickedCountryCode";
+    private static final String EMAILUSERPASSWORD = "atfnewsuser";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,44 +54,15 @@ public class EmailLoginActivity extends LoginActivity {
         ButterKnife.bind(this);
         getIntentFromLogin();
         mDb = AppDatabase.getsInstance(getApplicationContext());
-        // mAuth = FirebaseAuth.getInstance();
         mUserFirebaseDatabase = FirebaseDatabase.getInstance();
         mUserFirebaseDatabaseReference = mUserFirebaseDatabase.getReference("users");
-        /*progressDialog = new ProgressDialog(EmailLoginActivity.this);
-        progressDialog.setMessage("Loading...");
-        progressDialog.show();*/
-        /*try {
-            FirebaseAuth.getInstance().signInWithEmailAndPassword(emailLoginTxt.getText().toString(), "atfnewsuser");
-        } catch (Exception e) {
-            Log.e(TAG, "Error occurred while signing in");
-        }*/
         executeUserDBOperationViaLocal();
-       /* emailImg.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                progressDialog = new ProgressDialog(EmailLoginActivity.this);
-                progressDialog.setMessage("Loading...");
-                progressDialog.show();
-                try {
-                    FirebaseAuth.getInstance().signInWithEmailAndPassword(emailLoginTxt.getText().toString(), "atfnewsuser");
-                } catch (Exception e) {
-                    Log.e(TAG, "Error occurred while signing in");
-                }
-                executeUserDBOperationViaLocal();
-                *//*if (Utils.isNetworkAvailable(EmailLoginActivity.this) && mUserFirebaseDatabaseReference != null)
-                    findAndExecuteUserExistence(null);
-                    //executeUserDBOperationViaFirebase();
-                else
-                    executeUserDBOperationViaLocal();*//*
-            }
-        });*/
-
     }
 
     private void executeUserDBOperationViaLocal() {
         Intent intent = getIntent();
-        if (intent != null && intent.hasExtra("emailLoginText")) {
-            emailLoginTxt = intent.getStringExtra("emailLoginText");
+        if (intent != null && intent.hasExtra(EMAILLOGINTEXT)) {
+            emailLoginTxt = intent.getStringExtra(EMAILLOGINTEXT);
         }
         localUser = new User(generateRandomId(),
                 "atfuser",
@@ -101,7 +74,7 @@ public class EmailLoginActivity extends LoginActivity {
         );
         PrefUtils.setCurrentUser(localUser, EmailLoginActivity.this);
         try {
-            FirebaseAuth.getInstance().signInWithEmailAndPassword(emailLoginTxt, "atfnewsuser");
+            FirebaseAuth.getInstance().signInWithEmailAndPassword(emailLoginTxt, EMAILUSERPASSWORD);
         } catch (Exception e) {
             Log.e(TAG, "Error occurred while signing in");
         }
@@ -110,8 +83,8 @@ public class EmailLoginActivity extends LoginActivity {
         progressBar.setVisibility(View.GONE);
         Toast.makeText(EmailLoginActivity.this, "welcome " + localUser.name, Toast.LENGTH_LONG).show();
         Intent i = new Intent(EmailLoginActivity.this, TopNewsActivity.class);
-        i.putExtra("countryCode", countryCode);
-        i.putExtra("clickedCountryCode", clickedCountryCode);
+        i.putExtra(COUNTRYCODE, countryCode);
+        i.putExtra(CLICKEDCOUNTRYCODE, clickedCountryCode);
         startActivity(i);
         finish();
     }
@@ -129,29 +102,6 @@ public class EmailLoginActivity extends LoginActivity {
                     mDb.userDAO().insertUser(localUser);
             }
         });
-
-        /*UserViewModel viewModel = ViewModelProviders.of(this).get(UserViewModel.class);
-        viewModel.getUserDAO().findUserWithEmail(localUser.email).observe(this, new Observer<User>() {
-            @Override
-            public void onChanged(@Nullable User liveUser) {
-                Log.d(TAG, "Retrieving LiveData using Rooms in UserViewModel");
-                if (liveUser != null)
-                    emailFromLocalDb = liveUser.getEmail();
-
-                AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (emailFromLocalDb != null)
-                            mDb.userDAO().updateUser(localUser.id, localUser.name, localUser.email, localUser.facebookID, localUser.googleId, localUser.photoUrl);
-                        else
-                            mDb.userDAO().insertUser(localUser);
-                    }
-
-
-                });
-
-            }
-        });*/
     }
 
     private void insertOrUpdateFirebaseAtfNewsUser() {
@@ -184,8 +134,8 @@ public class EmailLoginActivity extends LoginActivity {
 
     private void getIntentFromLogin() {
         Intent i = getIntent();
-        countryCode = i.getStringExtra("countryCode");
-        clickedCountryCode = i.getStringExtra("clickedCountryCode");
+        countryCode = i.getStringExtra(COUNTRYCODE);
+        clickedCountryCode = i.getStringExtra(CLICKEDCOUNTRYCODE);
     }
 
 

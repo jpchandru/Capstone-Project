@@ -8,13 +8,13 @@
     <string name="action_favorite">Favorite</string>
 
     <string name="banner_ad_size">BANNER</string>
-    <string name="banner_ad_unit_id">Enter here</string>
-    <string name="interstitial_ad_unit_id"></string>
-    <string name="facebook_app_id"></string>
-    <string name="fb_login_protocol_scheme"></string>
-    <string name="firebase_url"></string>
+    <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="interstitial_ad_unit_id">/6499/example/interstitial</string>
+    <string name="facebook_app_id">1922407441395221</string>
+    <string name="fb_login_protocol_scheme">fb1922407441395221</string>
+    <string name="firebase_url">https://atfnews-62d69.firebaseio.com</string>
     <string name="title_activity_logout">LogoutActivity</string>
-    <string name="google_web_client_id"></string>
+    <string name="google_web_client_id">627917997445-5p0pkvidev2ohb5hfo6hc8djmodtn1aa.apps.googleusercontent.com</string>
     <string name="title_activity_trending_news">Trending News</string>
     <string name="title_activity_top_news">Top News</string>
     <string name="title_activity_fav_news">Favorite News</string>
@@ -36,6 +36,11 @@
     <string name="google_signin_image">Google SignIn Image</string>
     <string name="facebook_login_image">Facebook login image</string>
     <string name="email_login">Email Login</string>
+    <string name="text_focus">true</string>
+    <string name="text_center_alignment">center</string>
+    <string name="font_family_medium">sans-serif-medium</string>
+    <string name="font_family_condensed">sans-serif-condensed</string>
+    <string name="text_bold_style">bold</string>
 
 
 </resources>

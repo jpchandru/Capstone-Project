@@ -9,21 +9,15 @@ import android.widget.RemoteViewsService;
 import com.android.app.atfnews.R;
 import com.android.app.atfnews.model.AtfNewsCountries;
 import com.android.app.atfnews.utils.PrefUtils;
-import com.android.app.atfnews.view.LoginActivity;
 
 import java.util.ArrayList;
 
 public class AtfNewsCountriesListFactory implements RemoteViewsService.RemoteViewsFactory {
 
     public static final String TAG = AtfNewsCountriesListFactory.class.getSimpleName();
-    /**
-     * The RemoteViewsFactory acts as an adapter providing the data to the widget
-     * Explanation for most of the methods in:
-     * https://www.sitepoint.com/killer-way-to-show-a-list-of-items-in-android-collection-widget/
-     */
     private Context mContext;
-    private AtfNewsCountries atfNewsCountries;
     private ArrayList<AtfNewsCountries> atfNewsCountriesArrayList;
+    private static final String CLICKEDCOUNTRYCODE = "clicked_country_code";
 
     public AtfNewsCountriesListFactory(Context context) {
         this.mContext = context;
@@ -33,6 +27,7 @@ public class AtfNewsCountriesListFactory implements RemoteViewsService.RemoteVie
 
     @Override
     public void onCreate() {
+        //Below hardcoded countrylist will be replaced by a REST API call to retrieve all countries
         atfNewsCountriesArrayList.add(new AtfNewsCountries("USA", "us"));
         atfNewsCountriesArrayList.add(new AtfNewsCountries("United Kingdom", "gb"));
         atfNewsCountriesArrayList.add(new AtfNewsCountries("Australia", "au"));
@@ -44,6 +39,7 @@ public class AtfNewsCountriesListFactory implements RemoteViewsService.RemoteVie
      */
     @Override
     public void onDataSetChanged() {
+        //Below hardcoded countrylist will be replaced by a REST API call to retrieve all countries
         if (atfNewsCountriesArrayList == null && atfNewsCountriesArrayList.size() == 0) {
             atfNewsCountriesArrayList.add(new AtfNewsCountries("USA", "us"));
             atfNewsCountriesArrayList.add(new AtfNewsCountries("United Kingdom", "gb"));
@@ -73,7 +69,8 @@ public class AtfNewsCountriesListFactory implements RemoteViewsService.RemoteVie
         Log.d(TAG, "position: " + position
                 + ", countryCode: " + countryCode);
         Intent fillInIntent = new Intent();
-        fillInIntent.putExtra("clicked_country_code", countryCode);
+        //PrefUtils.setUrlNewsType(countryCode,mContext);
+        fillInIntent.putExtra(CLICKEDCOUNTRYCODE, countryCode);
         rv.setOnClickFillInIntent(R.id.widget_atfnews, fillInIntent);
         return rv;
     }
